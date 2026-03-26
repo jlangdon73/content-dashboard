@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joel Langdon — Content Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EEE9;
+    --border: rgba(44,44,42,0.12);
+    --border2: rgba(44,44,42,0.22);
+    --text: #2C2C2A;
+    --text2: #888780;
+    --text3: #B4B2A9;
+    --accent: #2C2C2A;
+    --accent-text: #F1EFE8;
+    --green: #1D9E75;
+    --green-bg: #E1F5EE;
+    --green-text: #085041;
+    --purple-bg: #EEEDFE;
+    --purple-text: #3C3489;
+    --coral-bg: #FAECE7;
+    --coral-text: #712B13;
+    --olive-bg: #EAF3DE;
+    --olive-text: #27500A;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-logo {
+    font-size: 15px;
+    font-weight: 500;
+    padding: 14px 0;
+    letter-spacing: 0.01em;
+  }
+
+  .topbar-logo span {
+    font-weight: 300;
+    color: var(--text2);
+    font-size: 12px;
+    margin-left: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .nav {
+    display: flex;
+    gap: 0;
+  }
+
+  .nav-btn {
+    padding: 14px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  .panel { display: none; padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1rem;
+    border: 0.5px solid var(--border);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 4px;
+  }
+
+  .stat-val { font-size: 22px; font-weight: 500; }
+
+  .sh { font-size: 13px; font-weight: 500; margin-bottom: 10px; }
+
+  .cal {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 5px;
+    margin-bottom: 1.5rem;
+  }
+
+  .cal-hdr {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text2);
+    text-align: center;
+    padding: 4px 0;
+  }
+
+  .cal-day {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 7px;
+    min-height: 76px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .cal-day:hover { border-color: var(--border2); }
+  .cal-day.has-post { border-left: 2px solid var(--accent); }
+  .cal-day.drop-day { background: var(--accent); border-color: var(--accent); }
+
+  .cal-date {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 4px;
+  }
+
+  .cal-day.drop-day .cal-date { color: rgba(241,239,232,0.65); }
+
+  .cpill {
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .p-coaching { background: var(--green-bg); color: var(--green-text); }
+  .p-faith { background: var(--purple-bg); color: var(--purple-text); }
+  .p-brand { background: var(--accent); color: var(--accent-text); }
+  .p-cinematic { background: var(--coral-bg); color: var(--coral-text); }
+  .p-lifestyle { background: var(--olive-bg); color: var(--olive-text); }
+  .p-scheduled { background: var(--green-bg); color: var(--green-text); }
+
+  .cal-day.drop-day .cpill { background: rgba(241,239,232,0.15); color: #F1EFE8; }
+
+  .detail-box {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+  }
+
+  .sched-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .sched-item {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 0.875rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .sched-item.posted { opacity: 0.5; }
+
+  .sched-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .dot-scheduled { background: var(--green); }
+  .dot-due { background: #D85A30; }
+  .dot-posted { background: var(--text3); }
+
+  .sched-info { flex: 1; min-width: 0; }
+  .sched-hook { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sched-meta { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .sched-actions { display: flex; gap: 5px; flex-shrink: 0; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .form-full { margin-bottom: 10px; }
+
+  label.lbl {
+    display: block;
+    font-size: 10px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 4px;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 8px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; }
+
+  .btn-dark {
+    padding: 9px 18px;
+    background: var(--accent);
+    color: var(--accent-text);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.15s;
+  }
+
+  .btn-dark:hover { opacity: 0.85; }
+
+  .btn-outline {
+    padding: 8px 18px;
+    background: transparent;
+    color: var(--text);
+    border: 0.5px solid var(--border2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s;
+  }
+
+  .btn-outline:hover { background: var(--surface2); }
+
+  .btn-green {
+    padding: 5px 10px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+
+  .btn-xs {
+    padding: 4px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+
+  .btn-xs-outline {
+    background: transparent;
+    color: var(--text);
+    border: 0.5px solid var(--border2);
+  }
+
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .idea-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 0.875rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .idea-card:hover { border-color: var(--border2); }
+
+  .idea-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .idea-hook { font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+  .idea-alts { font-size: 11px; color: var(--text2); line-height: 1.65; }
+  .idea-plat { font-size: 10px; color: var(--text3); margin-top: 5px; }
+
+  .folder-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .folder-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .folder-card:hover { border-color: var(--border2); }
+  .folder-card.sel { border: 1.5px solid var(--accent); }
+
+  .folder-icon {
+    width: 28px;
+    height: 20px;
+    background: var(--surface2);
+    border-radius: 3px;
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  .folder-icon::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 10px;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px 2px 0 0;
+  }
+
+  .folder-name { font-size: 11px; font-weight: 500; }
+  .folder-ct { font-size: 10px; color: var(--text2); }
+
+  .clip-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+
+  .clip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: var(--surface);
+    transition: border-color 0.15s;
+  }
+
+  .clip:hover { border-color: var(--border2); }
+  .clip.sel { border: 1.5px solid var(--accent); background: var(--surface2); }
+
+  .clip-thumb {
+    width: 36px;
+    height: 22px;
+    background: var(--surface2);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .clip-name { font-size: 11px; font-weight: 500; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .clip-chk { width: 14px; height: 14px; border: 0.5px solid var(--border2); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; }
+  .clip.sel .clip-chk { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+
+  .prompt-box {
+    background: var(--surface2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.875rem;
+    font-size: 11px;
+    line-height: 1.8;
+    color: var(--text2);
+    white-space: pre-wrap;
+    font-family: monospace;
+    min-height: 100px;
+    margin-bottom: 8px;
+  }
+
+  .hook-var-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    margin-bottom: 5px;
+  }
+
+  .hook-num { font-size: 10px; font-weight: 500; color: var(--text2); min-width: 18px; }
+  .hook-rm { font-size: 10px; color: var(--text2); cursor: pointer; padding: 2px 6px; border: 0.5px solid var(--border); border-radius: 3px; background: transparent; flex-shrink: 0; }
+  .hook-rm:hover { background: var(--surface2); }
+
+  .divider { height: 0.5px; background: var(--border); margin: 1rem 0; }
+
+  .toast {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--green);
+    color: #fff;
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    z-index: 999;
+    font-weight: 500;
+  }
+
+  .idea-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+
+  .empty { font-size: 12px; color: var(--text3); padding: 4px 0; }
+
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .folder-grid { grid-template-columns: repeat(2, 1fr); }
+    .topbar { flex-direction: column; align-items: flex-start; padding: 0 1rem; }
+    .nav { overflow-x: auto; width: 100%; }
+    .nav-btn { padding: 12px 14px; }
+    .panel { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">Joel Langdon <span>Content Dashboard</span></div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchTab('calendar',this)">Calendar</button>
+    <button class="nav-btn" onclick="switchTab('schedule',this)">Scheduler</button>
+    <button class="nav-btn" onclick="switchTab('ideas',this)">Video Ideas</button>
+    <button class="nav-btn" onclick="switchTab('remotion',this)">Remotion</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Saved</div>
+
+<!-- ── CALENDAR ──────────────────────────────────────────────── -->
+<div id="tab-calendar" class="panel active">
+  <div class="stat-row">
+    <div class="stat"><div class="stat-label">Drop date</div><div class="stat-val">Apr 11</div></div>
+    <div class="stat"><div class="stat-label">Days out</div><div class="stat-val" id="days-out">—</div></div>
+    <div class="stat"><div class="stat-label">Scheduled</div><div class="stat-val" id="sched-count">0</div></div>
+    <div class="stat"><div class="stat-label">Posted</div><div class="stat-val" id="posted-count">0</div></div>
+  </div>
+  <div class="sh">April 2026 — Drop countdown</div>
+  <div class="cal" id="cal-grid"></div>
+  <div class="sh">Selected day</div>
+  <div class="detail-box" id="day-detail">Click a day on the calendar to see the post plan and schedule a post.</div>
+</div>
+
+<!-- ── SCHEDULER ─────────────────────────────────────────────── -->
+<div id="tab-schedule" class="panel">
+  <div class="two-col" style="align-items:start;">
+    <div class="card">
+      <div class="sh" style="margin-bottom:12px;">Schedule a post</div>
+      <div class="form-row">
+        <div><label class="lbl">Date</label><input type="date" id="sch-date"></div>
+        <div><label class="lbl">Time</label><input type="time" id="sch-time" value="09:00"></div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="lbl">Platform</label>
+          <select id="sch-platform">
+            <option>Instagram</option>
+            <option>TikTok</option>
+            <option>Both</option>
+            <option>Personal account</option>
+            <option>XXO Athletics account</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">Content type</label>
+          <select id="sch-type">
+            <option value="coaching">High jump coaching</option>
+            <option value="faith">Faith and mindset</option>
+            <option value="brand">XXO brand</option>
+            <option value="cinematic">Cinematic</option>
+            <option value="lifestyle">Lifestyle</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-full"><label class="lbl">Hook / post title</label><input type="text" id="sch-hook" placeholder="e.g. If you high jump, stop scrolling."></div>
+      <div class="form-full">
+        <label class="lbl">Caption</label>
+        <textarea id="sch-caption" rows="4" placeholder="Write your caption here..."></textarea>
+      </div>
+      <div class="form-full"><label class="lbl">Notes</label><input type="text" id="sch-notes" placeholder="e.g. Use clip 3 from photoshoot folder"></div>
+      <div class="btn-row">
+        <button class="btn-dark" onclick="addPost()">Add to schedule</button>
+        <button class="btn-outline" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="sh" style="margin-bottom:10px;">Upcoming posts</div>
+      <div id="upcoming-list" class="sched-list"></div>
+      <div class="divider"></div>
+      <div class="sh" style="margin-bottom:10px;">Posted</div>
+      <div id="posted-list" class="sched-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── VIDEO IDEAS ────────────────────────────────────────────── -->
+<div id="tab-ideas" class="panel">
+  <p style="font-size:12px;color:var(--text2);margin-bottom:1rem;">Click any idea to load the hook directly into the scheduler.</p>
+  <div class="sh">High jump coaching — top TikTok format</div>
+  <div class="idea-list" id="coaching-ideas"></div>
+  <div class="sh" style="margin-top:1.25rem;">Faith and mindset — top Instagram format</div>
+  <div class="idea-list" id="faith-ideas"></div>
+  <div class="sh" style="margin-top:1.25rem;">Cinematic and identity</div>
+  <div class="idea-list" id="cinematic-ideas"></div>
+  <div class="sh" style="margin-top:1.25rem;">XXO Athletics brand</div>
+  <div class="idea-list" id="brand-ideas"></div>
+</div>
+
+<!-- ── REMOTION ───────────────────────────────────────────────── -->
+<div id="tab-remotion" class="panel">
+  <p style="font-size:12px;color:var(--text2);margin-bottom:1.25rem;">Select your clips, choose a video type, and generate a ready to paste Claude Remotion prompt. Use hook variations to test different openings on the same video.</p>
+  <div class="two-col" style="align-items:start;">
+    <div>
+      <div class="sh" style="margin-bottom:8px;">1. Select folder</div>
+      <div class="folder-grid" id="folder-grid"></div>
+      <div class="sh" style="margin-bottom:6px;">2. Select clips</div>
+      <div class="clip-list" id="clip-list-r"></div>
+      <div class="divider"></div>
+      <div class="sh" style="margin-bottom:8px;">3. Video type</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;" id="vtype-r"></div>
+      <label class="lbl">Main hook</label>
+      <input type="text" id="main-hook" placeholder="Opening line for this video..." oninput="buildPrompt()">
+    </div>
+
+    <div>
+      <div class="sh" style="margin-bottom:6px;">Hook variation tester</div>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.65;">Post the same video with different hooks to find your best performer. Each version keeps the full video identical and swaps only the first 3 to 5 seconds.</p>
+      <div id="hook-vars"></div>
+      <button class="btn-outline" style="width:100%;margin-bottom:1rem;" onclick="addHookVar()">+ Add hook variation</button>
+      <div class="divider"></div>
+      <div class="sh" style="margin-bottom:6px;">Remotion prompt</div>
+      <div class="prompt-box" id="remotion-prompt">Select clips and a video type to generate your prompt.</div>
+      <div class="btn-row" style="margin-bottom:1.25rem;">
+        <button class="btn-dark" onclick="copyEl('remotion-prompt',this)">Copy prompt</button>
+      </div>
+      <div id="hook-test-prompts"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const typeColors = {coaching:'p-coaching',faith:'p-faith',brand:'p-brand',cinematic:'p-cinematic',lifestyle:'p-lifestyle'};
+
+const calPlan = {
+  1:{type:'coaching',hook:'If you high jump, stop scrolling.',platform:'TikTok + IG'},
+  2:{type:'faith',hook:'You are chasing something that will not satisfy you.',platform:'Instagram'},
+  3:{type:'brand',hook:'30 hoodies. One drop. April 11th.',platform:'Both'},
+  4:{type:'coaching',hook:'Your approach is fine. Your takeoff is killing you.',platform:'TikTok'},
+  5:{type:'cinematic',hook:'Formed in hard places.',platform:'Instagram'},
+  6:{type:'lifestyle',hook:'This is what building from nothing looks like.',platform:'Both'},
+  7:{type:'faith',hook:'The hardest thing is trusting the process.',platform:'Instagram'},
+  8:{type:'coaching',hook:'The 5 mistakes high jumpers make.',platform:'TikTok'},
+  9:{type:'brand',hook:'Last colorway reveal before the drop.',platform:'Both'},
+  10:{type:'brand',hook:'Nobody needs another clothing brand.',platform:'Personal account'},
+  11:{type:'brand',hook:'DROP DAY. 30 hoodies. Link in bio.',platform:'Both — all day'},
+};
+
+let posts = JSON.parse(localStorage.getItem('jl-posts') || '[]');
+
+function savePosts() { localStorage.setItem('jl-posts', JSON.stringify(posts)); updateStats(); }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 1800);
+}
+
+function updateStats() {
+  document.getElementById('sched-count').textContent = posts.filter(p => p.status === 'scheduled').length;
+  document.getElementById('posted-count').textContent = posts.filter(p => p.status === 'posted').length;
+}
+
+function buildCal() {
+  const g = document.getElementById('cal-grid');
+  g.innerHTML = '';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'cal-hdr';
+    h.textContent = d;
+    g.appendChild(h);
+  });
+  for (let i = 0; i < 2; i++) g.appendChild(document.createElement('div'));
+  for (let d = 1; d <= 30; d++) {
+    const c = calPlan[d];
+    const userPosts = posts.filter(p => p.date === `2026-04-${String(d).padStart(2,'0')}`);
+    const cell = document.createElement('div');
+    cell.className = 'cal-day' + (c || userPosts.length ? ' has-post' : '') + (d === 11 ? ' drop-day' : '');
+    cell.innerHTML = `<div class="cal-date">${d}</div>`;
+    if (c) {
+      const pill = document.createElement('span');
+      pill.className = 'cpill ' + typeColors[c.type];
+      pill.textContent = c.type;
+      cell.appendChild(pill);
+    }
+    if (userPosts.length) {
+      const pill = document.createElement('span');
+      pill.className = 'cpill p-scheduled';
+      pill.textContent = 'scheduled';
+      cell.appendChild(pill);
+    }
+    cell.onclick = () => showDay(d);
+    g.appendChild(cell);
+  }
+}
+
+function showDay(d) {
+  const el = document.getElementById('day-detail');
+  const c = calPlan[d];
+  const userPosts = posts.filter(p => p.date === `2026-04-${String(d).padStart(2,'0')}`);
+  let html = '';
+  if (c) {
+    html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><span class="cpill ${typeColors[c.type]}">${c.type}</span><span style="font-size:11px;color:var(--text2);">Planned</span></div>`;
+    html += `<div style="font-size:13px;font-weight:500;margin-bottom:4px;">"${c.hook}"</div>`;
+    html += `<div style="font-size:11px;color:var(--text2);margin-bottom:12px;">Platform: ${c.platform}</div>`;
+  }
+  userPosts.forEach(p => {
+    html += `<div style="margin-top:6px;padding:8px 10px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);">`;
+    html += `<div style="font-size:11px;font-weight:500;">${p.hook}</div>`;
+    html += `<div style="font-size:10px;color:var(--text2);margin-top:2px;">${p.platform} · ${p.time} · ${p.status}</div>`;
+    html += `</div>`;
+  });
+  if (!c && !userPosts.length) {
+    html = '<span style="color:var(--text3);">No post planned. Go to the Scheduler tab to add one.</span>';
+  }
+  el.innerHTML = html;
+  document.getElementById('sch-date').value = `2026-04-${String(d).padStart(2,'0')}`;
+  switchTab('schedule', document.querySelectorAll('.nav-btn')[1]);
+}
+
+function addPost() {
+  const date = document.getElementById('sch-date').value;
+  const time = document.getElementById('sch-time').value;
+  const platform = document.getElementById('sch-platform').value;
+  const type = document.getElementById('sch-type').value;
+  const hook = document.getElementById('sch-hook').value.trim();
+  const caption = document.getElementById('sch-caption').value.trim();
+  const notes = document.getElementById('sch-notes').value.trim();
+  if (!date || !hook) { toast('Add a date and hook first'); return; }
+  posts.push({ id: Date.now(), date, time, platform, type, hook, caption, notes, status: 'scheduled' });
+  savePosts();
+  renderSchedule();
+  buildCal();
+  clearForm();
+  toast('Post scheduled');
+}
+
+function clearForm() {
+  document.getElementById('sch-hook').value = '';
+  document.getElementById('sch-caption').value = '';
+  document.getElementById('sch-notes').value = '';
+}
+
+function markPosted(id) {
+  const p = posts.find(x => x.id === id);
+  if (p) { p.status = 'posted'; savePosts(); renderSchedule(); toast('Marked as posted'); }
+}
+
+function deletePost(id) {
+  posts = posts.filter(x => x.id !== id);
+  savePosts();
+  renderSchedule();
+  buildCal();
+  toast('Removed');
+}
+
+function renderSchedule() {
+  const upcoming = posts.filter(p => p.status === 'scheduled').sort((a,b) => a.date.localeCompare(b.date));
+  const posted = posts.filter(p => p.status === 'posted').sort((a,b) => b.date.localeCompare(a.date));
+  const ul = document.getElementById('upcoming-list');
+  const pl = document.getElementById('posted-list');
+
+  ul.innerHTML = upcoming.length ? upcoming.map(p => `
+    <div class="sched-item">
+      <div class="sched-dot dot-scheduled"></div>
+      <div class="sched-info">
+        <div class="sched-hook">${p.hook}</div>
+        <div class="sched-meta">${p.date} · ${p.time} · ${p.platform}</div>
+        ${p.caption ? `<div class="sched-meta" style="margin-top:3px;font-style:italic;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${p.caption.substring(0,80)}${p.caption.length>80?'...':''}</div>` : ''}
+        ${p.notes ? `<div class="sched-meta" style="margin-top:2px;">Note: ${p.notes}</div>` : ''}
+      </div>
+      <div class="sched-actions">
+        <button class="btn-green btn-xs" onclick="markPosted(${p.id})">Posted</button>
+        <button class="btn-xs btn-xs-outline" onclick="deletePost(${p.id})">Remove</button>
+      </div>
+    </div>`).join('') : '<div class="empty">No upcoming posts scheduled.</div>';
+
+  pl.innerHTML = posted.length ? posted.map(p => `
+    <div class="sched-item posted">
+      <div class="sched-dot dot-posted"></div>
+      <div class="sched-info">
+        <div class="sched-hook">${p.hook}</div>
+        <div class="sched-meta">${p.date} · ${p.platform}</div>
+      </div>
+      <div class="sched-actions">
+        <button class="btn-xs btn-xs-outline" onclick="deletePost(${p.id})">Remove</button>
+      </div>
+    </div>`).join('') : '<div class="empty">No posts marked as posted yet.</div>';
+
+  updateStats();
+}
+
+const ideas = {
+  coaching: [
+    {hook:'If you high jump, stop scrolling. This is for you.',alts:['Every high jumper needs to hear this.','High jumpers — I made this specifically for you.','This is the video I wish someone made when I started jumping.'],platform:'TikTok primary'},
+    {hook:'Your approach is fine. Your takeoff is killing you.',alts:['You have a great approach and still cannot jump high. Here is why.','Stop thinking about going up. Think about this instead.','Speed means nothing if you cannot get it off the ground.'],platform:'TikTok + Instagram'},
+    {hook:'The 5 mistakes high jumpers make that cost them inches.',alts:['5 things to fix before your next competition.','If you do these 5 things your jump improves in one week.','The checklist I run before every jump. Use this.'],platform:'TikTok primary'},
+    {hook:'Nobody teaches this part. It is why most people hit the bar.',alts:['Your coach probably never showed you this.','Everyone focuses on the approach. This actually clears the bar.','The one thing Barshim does that nobody talks about.'],platform:'TikTok + Instagram'},
+  ],
+  faith: [
+    {hook:'You are chasing something that will not satisfy you. And you already know it.',alts:['What happens when you get everything you wanted and it is still not enough.','The moment I stopped chasing athletics and started chasing something real.','Nobody talks about what happens after you achieve the goal.'],platform:'Instagram primary'},
+    {hook:'Comparison is the thief of joy. And most athletes are getting robbed.',alts:['You are comparing your behind the scenes to everyone else\'s highlight reel.','Your chapter one is supposed to look like a chapter one.','Everyone you look up to was once exactly where you are.'],platform:'Instagram primary'},
+    {hook:'The hardest thing I have ever done as an athlete is trust when I could not see the result.',alts:['I had no control and that was the point.','What do you do when you have done everything right and it is still not working.','God did not remove the hard season. He changed what I thought it was for.'],platform:'Instagram primary'},
+    {hook:'Holding onto that is costing you more than you think.',alts:['The most athletic thing you can do has nothing to do with your body.','I used to think forgiveness was for the other person. I was wrong.','This one decision changed how I compete, train, and live.'],platform:'Instagram primary'},
+  ],
+  cinematic: [
+    {hook:'Formed in hard places.',alts:['The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.'],platform:'Instagram primary'},
+    {hook:'You become the standard of the people around you. Choose carefully.',alts:['The most important decision you make has nothing to do with training.','Protect your energy like you protect your training.','Who you spend time with is who you become.'],platform:'Instagram'},
+  ],
+  brand: [
+    {hook:'30 hoodies. One drop. No restock. April 11th.',alts:['Built for the athlete who shows up when nobody is watching.','Most brands make clothes. We make a statement.','The X is the setback. The O is what waits on the other side.'],platform:'Both accounts'},
+    {hook:'Nobody needs another clothing brand. So we built something different.',alts:['This is not a brand built around a celebrity. It is built around a standard.','Why would a D1 athlete start a clothing brand. Let me show you.','The name means something. X is failure. O is what comes after.'],platform:'Personal account'},
+  ],
+};
+
+function renderIdeas() {
+  Object.entries(ideas).forEach(([type, list]) => {
+    const c = document.getElementById(type + '-ideas');
+    c.innerHTML = '';
+    list.forEach(item => {
+      const d = document.createElement('div');
+      d.className = 'idea-card';
+      d.innerHTML = `<div class="idea-top"><span class="cpill ${typeColors[type]}">${type}</span></div><div class="idea-hook">"${item.hook}"</div><div class="idea-alts">Alts: ${item.alts.map(a => `"${a}"`).join(' · ')}</div><div class="idea-plat">${item.platform}</div>`;
+      d.onclick = () => {
+        document.getElementById('sch-hook').value = item.hook;
+        document.getElementById('sch-type').value = type;
+        switchTab('schedule', document.querySelectorAll('.nav-btn')[1]);
+        toast('Hook loaded to scheduler');
+      };
+      c.appendChild(d);
+    });
+  });
+}
+
+const folders = [
+  {name:'Photoshoot',clips:['Hero walk away','Lean pose front','Cinematic profile','Jump sequence slow mo']},
+  {name:'Training',clips:['Morning lift session','Approach drills','Bar clearance attempt']},
+  {name:'Brand / XXO',clips:['Hoodie unboxing raw','Product close up','Colorway flat lay']},
+  {name:'Lifestyle',clips:['Campus walk morning','Track field wide shot']},
+];
+
+let selFolder = 0, selClips = new Set(), hookVars = [], selVtype = 0;
+const vtypes = ['Cinematic inspirational','High jump coaching','XXO brand content','Faith and mindset'];
+const vtypeKeys = ['cinematic','coaching','brand','faith'];
+
+function renderFolders() {
+  document.getElementById('folder-grid').innerHTML = folders.map((f,i) =>
+    `<div class="folder-card${i===selFolder?' sel':''}" onclick="selFolder=${i};renderFolders();renderClips();">
+      <div class="folder-icon"></div>
+      <div class="folder-name">${f.name}</div>
+      <div class="folder-ct">${f.clips.length} clips</div>
+    </div>`).join('');
+}
+
+function renderClips() {
+  document.getElementById('clip-list-r').innerHTML = folders[selFolder].clips.map((c,i) => {
+    const id = `${selFolder}-${i}`;
+    const s = selClips.has(id);
+    return `<div class="clip${s?' sel':''}" onclick="toggleClip('${id}')">
+      <div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div>
+      <div class="clip-name">${c}</div>
+      <div class="clip-chk">${s?'✓':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleClip(id) {
+  if (selClips.has(id)) selClips.delete(id);
+  else selClips.add(id);
+  renderClips();
+  buildPrompt();
+}
+
+function renderVtypes() {
+  document.getElementById('vtype-r').innerHTML = vtypes.map((v,i) =>
+    `<label style="font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer;">
+      <input type="radio" name="vt" value="${i}" ${i===0?'checked':''} onchange="selVtype=${i};buildPrompt();"> ${v}
+    </label>`).join('');
+}
+
+const promptTpls = {
+  cinematic: (clips,hook) =>
+`Edit a cinematic inspirational video.
+Clips: ${clips.join(', ')}
+Hook (first 3-5 seconds): "${hook || 'Open with a slow cinematic shot, no explanation yet'}"
+
+Style: Cool, desaturated, slightly underexposed. Film grain amount 25. Slow motion on athletic movement. Average clip 3 to 6 seconds.
+Color grade: Pull exposure down, reduce saturation 20%, lift contrast moderately.
+Audio: Ambient instrumental, no lyrics. Voiceover slow with deliberate pauses. Music sits below voiceover.
+Text: White, lowercase, clean sans serif, simple fade in, lower third placement.
+End: Single closing line then fade to black.
+Mood: Short film, not a social media post. Every edit serves the emotional message.`,
+
+  coaching: (clips,hook) =>
+`Edit a high jump coaching video.
+Clips: ${clips.join(', ')}
+Hook (first 3-5 seconds): "${hook || 'Open with a bold direct statement about a common mistake'}"
+
+Style: Clear and educational. Slow motion on technique demonstrations. Numbered text overlays for each tip.
+Pacing: 2 to 4 second average clips. Cut on the beat.
+Audio: Low energy background track, no lyrics. Clear voiceover explaining each point.
+Structure: Hook, numbered tips with demonstration clips, clear takeaway at the end. Under 60 seconds.`,
+
+  brand: (clips,hook) =>
+`Edit an XXO Athletics brand video.
+Clips: ${clips.join(', ')}
+Hook (first 3-5 seconds): "${hook || 'Open with a product detail close up, no context'}"
+
+Style: Dark, cinematic, premium. Deep blacks, muted tones. Film grain.
+Color: Darker and more contrasty than personal content. Product stands out in frame.
+Audio: Minimal ambient sound. Let the visuals breathe.
+End: XXO Athletics text + April 11th drop date.
+Mood: Serious, intentional, premium. This brand means something.`,
+
+  faith: (clips,hook) =>
+`Edit a faith and mindset video.
+Clips: ${clips.join(', ')}
+Hook (first 3-5 seconds): "${hook || 'Open with a question that creates tension before any resolution'}"
+
+Style: Personal and cinematic. Natural lighting, film grain, cool muted tones.
+Pacing: Very slow. Each voiceover line gets space. Silence is intentional.
+Audio: Near silence background music. Voiceover carries the emotion.
+Structure: Tension, personal experience, faith shift, message for the viewer, single closing line.
+Tone: Honest, grounded. Like a real conversation with someone who has been through something real.`,
+};
+
+function getClipNames() {
+  return Array.from(selClips).map(id => {
+    const [fi, ci] = id.split('-').map(Number);
+    return folders[fi].clips[ci];
+  });
+}
+
+function buildPrompt() {
+  const clips = getClipNames();
+  const hook = document.getElementById('main-hook').value.trim();
+  const key = vtypeKeys[selVtype];
+  document.getElementById('remotion-prompt').textContent =
+    clips.length ? promptTpls[key](clips, hook) : 'Select clips and a video type to generate your prompt.';
+  buildHookTestPrompts();
+}
+
+function addHookVar() { hookVars.push(''); renderHookVars(); }
+
+function removeHookVar(i) { hookVars.splice(i,1); renderHookVars(); buildHookTestPrompts(); }
+
+function renderHookVars() {
+  const c = document.getElementById('hook-vars');
+  if (!hookVars.length) {
+    c.innerHTML = '<p class="empty" style="margin-bottom:8px;">No variations yet. Add variations to test different openings on the same video.</p>';
+    return;
+  }
+  c.innerHTML = hookVars.map((h,i) =>
+    `<div class="hook-var-row">
+      <div class="hook-num">V${i+1}</div>
+      <input type="text" value="${h.replace(/"/g,'&quot;')}" placeholder="Hook variation ${i+1}..." style="flex:1;border:none;background:transparent;outline:none;font-size:11px;" oninput="hookVars[${i}]=this.value;buildHookTestPrompts();">
+      <button class="hook-rm" onclick="removeHookVar(${i})">remove</button>
+    </div>`).join('');
+}
+
+function buildHookTestPrompts() {
+  const c = document.getElementById('hook-test-prompts');
+  const clips = getClipNames();
+  const key = vtypeKeys[selVtype];
+  const filled = hookVars.filter(h => h.trim());
+  if (!filled.length || !clips.length) { c.innerHTML = ''; return; }
+  c.innerHTML = `<div class="divider"></div><div class="sh" style="margin-bottom:8px;">Hook test prompts</div>` +
+    filled.map((h,i) => {
+      const id = `hook-prompt-${i}`;
+      return `<div style="margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Version ${i+1} — "${h.substring(0,50)}${h.length>50?'...':''}"</div>
+        <div class="prompt-box" id="${id}" style="font-size:10px;">Keep the full video IDENTICAL. Swap ONLY the first 3 to 5 seconds with this new hook.\n\nHook V${i+1}: "${h}"\n\n${promptTpls[key](clips,h)}</div>
+        <button class="btn-outline" style="font-size:10px;padding:5px 10px;" onclick="copyEl('${id}',this)">Copy V${i+1} prompt</button>
+      </div>`;
+    }).join('');
+}
+
+function copyEl(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = orig, 1800);
+    }
+  });
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+const drop = new Date('2026-04-11');
+const now = new Date();
+const diff = Math.ceil((drop - now) / (1000 * 60 * 60 * 24));
+document.getElementById('days-out').textContent = Math.max(0, diff);
+
+buildCal();
+renderSchedule();
+renderIdeas();
+renderFolders();
+renderClips();
+renderVtypes();
+renderHookVars();
+</script>
+</body>
+</html>
