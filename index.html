@@ -17,7 +17,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .nav-btn{padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--text2);transition:all 0.15s;white-space:nowrap;}
 .nav-btn:hover{color:var(--text);}
 .nav-btn.active{color:var(--text);border-bottom-color:var(--accent);}
-.panel{display:none;padding:1.5rem;max-width:1100px;margin:0 auto;}
+.panel{display:none;padding:1.5rem;max-width:1400px;margin:0 auto;}
 .panel.active{display:block;}
 .stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem;}
 .stat{background:var(--surface);border-radius:var(--radius);padding:1rem;border:0.5px solid var(--border);}
@@ -25,15 +25,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .stat-val{font-size:22px;font-weight:500;}
 .sh{font-size:13px;font-weight:500;margin-bottom:10px;}
 .sub{font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.65;}
+.three-col{display:grid;grid-template-columns:28% 38% 34%;gap:1.5rem;align-items:start;}
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-bottom:1.5rem;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.cal-nav-month{font-size:13px;font-weight:500;min-width:120px;text-align:center;}
+.cal-nav-btn{background:transparent;border:0.5px solid var(--border2);color:var(--text);padding:6px 12px;font-size:11px;cursor:pointer;border-radius:var(--radius);transition:all 0.15s;}
+.cal-nav-btn:hover{border-color:var(--border);background:var(--surface2);}
 .cal-hdr{font-size:10px;font-weight:500;color:var(--text2);text-align:center;padding:4px 0;}
-.cal-day{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:7px;min-height:76px;cursor:pointer;transition:border-color 0.15s;}
+.cal-day{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:7px;min-height:76px;cursor:pointer;transition:border-color 0.15s;position:relative;}
 .cal-day:hover{border-color:var(--border2);}
 .cal-day.has-post{border-left:2px solid var(--accent);}
 .cal-day.drop-day{background:var(--accent);border-color:var(--accent);}
+.cal-day.today{border:1px solid var(--accent);font-weight:600;}
 .cal-date{font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;}
 .cal-day.drop-day .cal-date{color:rgba(241,239,232,0.65);}
-.cpill{font-size:9px;padding:1px 5px;border-radius:8px;margin-bottom:2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cpill{font-size:9px;padding:1px 5px;border-radius:8px;margin-bottom:2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.cpill.edit-icon{position:absolute;top:6px;right:6px;font-size:9px;padding:2px;background:rgba(0,0,0,0.05);cursor:pointer;display:none;}
+.cal-day:hover .cpill.edit-icon{display:block;}
 .p-coaching{background:var(--green-bg);color:var(--green-text);}
 .p-faith{background:var(--purple-bg);color:var(--purple-text);}
 .p-brand{background:var(--accent);color:var(--accent-text);}
@@ -42,13 +50,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .p-scheduled{background:var(--green-bg);color:var(--green-text);}
 .p-trial{background:var(--blue-bg);color:var(--blue-text);}
 .cal-day.drop-day .cpill{background:rgba(241,239,232,0.15);color:#F1EFE8;}
-.detail-box{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:1.5rem;font-size:13px;color:var(--text2);}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.col{display:flex;flex-direction:column;}
 .card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .sched-list{display:flex;flex-direction:column;gap:6px;}
 .sched-item{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:0.875rem 1rem;display:flex;align-items:flex-start;gap:10px;}
 .sched-item.posted{opacity:0.5;}
 .sched-item.trial-item{border-left:2px solid var(--blue-text);}
+.sched-item.form-mode{flex-direction:column;}
 .sched-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
 .dot-scheduled{background:var(--green);}
 .dot-posted{background:var(--text3);}
@@ -57,6 +66,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .sched-hook{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sched-meta{font-size:11px;color:var(--text2);margin-top:2px;}
 .sched-actions{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;}
+.sched-edit-form{display:flex;flex-direction:column;gap:8px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
 .form-full{margin-bottom:10px;}
 label.lbl{display:block;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;}
@@ -71,12 +81,27 @@ textarea{resize:vertical;}
 .btn-xs-outline{padding:4px 10px;background:transparent;color:var(--text);border:0.5px solid var(--border2);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;cursor:pointer;border-radius:2px;}
 .btn-xs-outline:hover{background:var(--surface2);}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
-.idea-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:0.875rem 1rem;cursor:pointer;transition:border-color 0.15s;margin-bottom:6px;}
+.idea-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:0.875rem 1rem;cursor:pointer;transition:border-color 0.15s;margin-bottom:6px;position:relative;}
 .idea-card:hover{border-color:var(--border2);}
+.idea-card.form-mode{cursor:default;}
 .idea-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.idea-badge{font-size:8px;background:rgba(0,0,0,0.05);color:var(--text2);padding:2px 6px;border-radius:4px;}
 .idea-hook{font-size:12px;font-weight:500;margin-bottom:4px;}
 .idea-alts{font-size:11px;color:var(--text2);line-height:1.65;}
 .idea-plat{font-size:10px;color:var(--text3);margin-top:5px;}
+.idea-actions{display:flex;gap:6px;margin-top:8px;font-size:16px;cursor:pointer;}
+.idea-actions span{cursor:pointer;}
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.filter-pill{padding:5px 10px;border:0.5px solid var(--border2);border-radius:12px;background:transparent;font-size:11px;cursor:pointer;color:var(--text);font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.filter-pill.active{background:var(--accent);color:var(--accent-text);border-color:var(--accent);}
+.filter-pill:hover{border-color:var(--border);}
+.idea-form{display:flex;flex-direction:column;gap:8px;}
+.day-panel{background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;margin-top:1rem;margin-bottom:1.5rem;}
+.day-panel-header{font-size:13px;font-weight:500;margin-bottom:10px;}
+.day-panel-items{margin-bottom:12px;}
+.day-item{background:var(--surface);border-left:2px solid var(--green);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:6px;font-size:12px;}
+.day-item.trial{border-left-color:var(--blue-text);}
+.form-section{display:flex;flex-direction:column;gap:8px;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);}
 .folder-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:10px;}
 .folder-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:0.75rem;cursor:pointer;}
 .folder-card:hover{border-color:var(--border2);}
@@ -85,7 +110,6 @@ textarea{resize:vertical;}
 .folder-icon::before{content:'';position:absolute;top:-4px;left:0;width:10px;height:4px;background:var(--surface2);border-radius:2px 2px 0 0;}
 .folder-name{font-size:11px;font-weight:500;}
 .folder-ct{font-size:10px;color:var(--text2);}
-.folder-live{font-size:9px;color:var(--green-text);font-weight:500;}
 .clip-list{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
 .clip{display:flex;align-items:center;gap:8px;padding:7px 10px;border:0.5px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--surface);}
 .clip:hover{border-color:var(--border2);}
@@ -104,74 +128,134 @@ textarea{resize:vertical;}
 .winner-badge{display:inline-block;background:#F0997B;color:#712B13;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;margin-left:6px;}
 .suggest-btn{padding:6px 12px;background:var(--purple-bg);color:var(--purple-text);border:none;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;cursor:pointer;border-radius:var(--radius);}
 .suggest-btn:hover{opacity:0.8;}
-.browser-note{font-size:9px;color:var(--text3);padding:8px 0;font-style:italic;}
-@media(max-width:700px){.two-col{grid-template-columns:1fr;}.stat-row{grid-template-columns:repeat(2,1fr);}.folder-grid{grid-template-columns:repeat(2,1fr);}.topbar{flex-direction:column;align-items:flex-start;padding:0 1rem;}.nav{overflow-x:auto;width:100%;}.panel{padding:1rem;}}
+.collapsible-toggle{background:transparent;border:none;color:var(--text2);font-size:11px;font-weight:500;cursor:pointer;padding:0;margin-top:10px;}
+.collapsible-toggle:hover{color:var(--text);}
+.add-form-btn{display:flex;align-items:center;gap:6px;background:transparent;border:0.5px solid var(--border2);padding:8px 12px;border-radius:var(--radius);font-size:11px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.15s;}
+.add-form-btn:hover{border-color:var(--border);background:var(--surface2);}
+@media(max-width:700px){
+.three-col{grid-template-columns:1fr;}
+.stat-row{grid-template-columns:repeat(2,1fr);}
+.folder-grid{grid-template-columns:repeat(2,1fr);}
+.topbar{flex-direction:column;align-items:flex-start;padding:0 1rem;}
+.nav{overflow-x:auto;width:100%;}
+.panel{padding:1rem;}
+.form-row{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 <div class="topbar">
   <div class="topbar-logo">Joel Langdon <span>Content Dashboard</span></div>
   <div class="nav">
-    <button class="nav-btn active" onclick="switchTab('calendar',this)">Calendar</button>
-    <button class="nav-btn" onclick="switchTab('schedule',this)">Scheduler</button>
+    <button class="nav-btn active" onclick="switchTab('overview',this)">Overview</button>
     <button class="nav-btn" onclick="switchTab('hook-tester',this)">Hook Tester</button>
-    <button class="nav-btn" onclick="switchTab('ideas',this)">Video Ideas</button>
     <button class="nav-btn" onclick="switchTab('remotion',this)">Remotion</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
-<!-- CALENDAR -->
-<div id="tab-calendar" class="panel active">
+<!-- OVERVIEW (3-column layout) -->
+<div id="tab-overview" class="panel active">
   <div class="stat-row">
     <div class="stat"><div class="stat-label">Drop date</div><div class="stat-val">Apr 11</div></div>
     <div class="stat"><div class="stat-label">Days out</div><div class="stat-val" id="days-out">—</div></div>
     <div class="stat"><div class="stat-label">Scheduled</div><div class="stat-val" id="sched-count">0</div></div>
     <div class="stat"><div class="stat-label">Posted</div><div class="stat-val" id="posted-count">0</div></div>
   </div>
-  <div class="sh">April 2026 — Drop countdown</div>
-  <div class="cal" id="cal-grid"></div>
-  <div class="sh">Selected day</div>
-  <div class="detail-box" id="day-detail">Click a day to see details.</div>
-</div>
 
-<!-- SCHEDULER -->
-<div id="tab-schedule" class="panel">
-  <div class="two-col" style="align-items:start;">
-    <div class="card">
-      <div class="sh" style="margin-bottom:12px;">Schedule a post</div>
-      <div class="form-row">
-        <div><label class="lbl">Date</label><input type="date" id="sch-date"></div>
-        <div><label class="lbl">Time</label><input type="time" id="sch-time" value="09:00"></div>
-      </div>
-      <div class="form-row">
-        <div><label class="lbl">Platform</label>
-          <select id="sch-platform">
-            <option>Instagram</option><option>TikTok</option><option>Both</option>
-            <option>Instagram Trial Reel</option><option>Personal account</option><option>XXO Athletics account</option>
-          </select>
+  <div class="three-col">
+    <!-- LEFT: CALENDAR -->
+    <div class="col">
+      <div class="sh">Calendar</div>
+      <div class="card">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="prevMonth()">←</button>
+          <div class="cal-nav-month" id="cal-month-year">April 2026</div>
+          <button class="cal-nav-btn" onclick="nextMonth()">→</button>
         </div>
-        <div><label class="lbl">Content type</label>
-          <select id="sch-type">
-            <option value="coaching">High jump coaching</option><option value="faith">Faith and mindset</option>
-            <option value="brand">XXO brand</option><option value="cinematic">Cinematic</option><option value="lifestyle">Lifestyle</option>
-          </select>
-        </div>
+        <div class="cal" id="cal-grid"></div>
       </div>
-      <div class="form-full"><label class="lbl">Hook / post title</label><input type="text" id="sch-hook" placeholder="e.g. If you high jump, stop scrolling."></div>
-      <div class="form-full"><label class="lbl">Caption</label><textarea id="sch-caption" rows="3" placeholder="Caption..."></textarea></div>
-      <div class="form-full"><label class="lbl">Notes</label><input type="text" id="sch-notes" placeholder="e.g. Use clip 3 from photoshoot folder"></div>
-      <div class="btn-row">
-        <button class="btn-dark" id="sch-submit-btn" onclick="addPost()">Add to schedule</button>
-        <button class="btn-outline" onclick="clearForm()">Clear</button>
-      </div>
+      <div id="day-panel" style="display:none;"><!-- populated by showDay --></div>
     </div>
-    <div>
-      <div class="sh" style="margin-bottom:10px;">Upcoming posts</div>
+
+    <!-- MIDDLE: UPCOMING POSTS -->
+    <div class="col">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div class="sh" style="margin-bottom:0;">Upcoming Posts</div>
+        <button class="add-form-btn" onclick="toggleAddPostForm()">+ Add Post</button>
+      </div>
+      <div id="add-post-form" style="display:none;">
+        <div class="card">
+          <div class="sh" style="margin-bottom:12px;">Add new post</div>
+          <div class="form-row">
+            <div><label class="lbl">Date</label><input type="date" id="add-date"></div>
+            <div><label class="lbl">Time</label><input type="time" id="add-time" value="09:00"></div>
+          </div>
+          <div class="form-row">
+            <div><label class="lbl">Platform</label>
+              <select id="add-platform">
+                <option>Instagram</option><option>TikTok</option><option>Both</option>
+                <option>Instagram Trial Reel</option><option>Personal account</option><option>XXO Athletics account</option>
+              </select>
+            </div>
+            <div><label class="lbl">Content type</label>
+              <select id="add-type">
+                <option value="coaching">High jump coaching</option><option value="faith">Faith and mindset</option>
+                <option value="brand">XXO brand</option><option value="cinematic">Cinematic</option><option value="lifestyle">Lifestyle</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-full"><label class="lbl">Hook / post title</label><input type="text" id="add-hook" placeholder="e.g. If you high jump, stop scrolling."></div>
+          <div class="form-full"><label class="lbl">Caption</label><textarea id="add-caption" rows="3" placeholder="Caption..."></textarea></div>
+          <div class="form-full"><label class="lbl">Notes</label><input type="text" id="add-notes" placeholder="e.g. Use clip 3 from photoshoot folder"></div>
+          <div class="btn-row">
+            <button class="btn-dark" onclick="submitAddPost()">Add to schedule</button>
+            <button class="btn-outline" onclick="toggleAddPostForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
       <div id="upcoming-list" class="sched-list"></div>
       <div class="divider"></div>
-      <div class="sh" style="margin-bottom:10px;">Posted</div>
-      <div id="posted-list" class="sched-list"></div>
+      <button class="collapsible-toggle" onclick="togglePostedSection()">Show posted (<span id="posted-count-inline">0</span>)</button>
+      <div id="posted-section" style="display:none;">
+        <div id="posted-list" class="sched-list"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: VIDEO IDEAS -->
+    <div class="col">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div class="sh" style="margin-bottom:0;">Video Ideas</div>
+        <button class="add-form-btn" onclick="toggleAddIdeaForm()">+ Add Idea</button>
+      </div>
+      <div class="filter-pills">
+        <button class="filter-pill active" onclick="filterIdeas('all')">All</button>
+        <button class="filter-pill" onclick="filterIdeas('coaching')">Coaching</button>
+        <button class="filter-pill" onclick="filterIdeas('faith')">Faith</button>
+        <button class="filter-pill" onclick="filterIdeas('brand')">Brand</button>
+        <button class="filter-pill" onclick="filterIdeas('cinematic')">Cinematic</button>
+        <button class="filter-pill" onclick="filterIdeas('lifestyle')">Lifestyle</button>
+        <button class="filter-pill" onclick="filterIdeas('custom')">Custom</button>
+      </div>
+      <div id="add-idea-form" style="display:none;">
+        <div class="card" style="margin-bottom:12px;">
+          <div class="sh" style="margin-bottom:12px;">Add new idea</div>
+          <div class="form-full"><label class="lbl">Category</label>
+            <select id="add-idea-category">
+              <option value="coaching">High jump coaching</option><option value="faith">Faith and mindset</option>
+              <option value="brand">XXO brand</option><option value="cinematic">Cinematic</option><option value="lifestyle">Lifestyle</option>
+            </select>
+          </div>
+          <div class="form-full"><label class="lbl">Hook</label><input type="text" id="add-idea-hook" placeholder="Main hook text..."></div>
+          <div class="form-full"><label class="lbl">Alt angles (one per line)</label><textarea id="add-idea-alts" rows="3" placeholder="Alt 1&#10;Alt 2&#10;Alt 3"></textarea></div>
+          <div class="form-full"><label class="lbl">Platform</label><input type="text" id="add-idea-platform" placeholder="e.g. TikTok primary"></div>
+          <div class="btn-row">
+            <button class="btn-dark" onclick="submitAddIdea()">Add idea</button>
+            <button class="btn-outline" onclick="toggleAddIdeaForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div id="ideas-list" class="sched-list"></div>
     </div>
   </div>
 </div>
@@ -180,7 +264,7 @@ textarea{resize:vertical;}
 <div id="tab-hook-tester" class="panel">
   <div class="sh">Hook Tester</div>
   <div class="sub">Select a base video, write up to 5 hook variations or get AI suggestions, then schedule everything in one click. The main video posts to Instagram and TikTok. Hook variations post as Instagram trial reels, spaced 2 hours apart from your start time.</div>
-  <div class="two-col" style="align-items:start;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
     <div>
       <div class="card" style="margin-bottom:1rem;">
         <div class="sh" style="margin-bottom:8px;">1. Select base video</div>
@@ -190,8 +274,6 @@ textarea{resize:vertical;}
             <option value="2">Brand / XXO</option><option value="3">Lifestyle</option>
           </select>
         </div>
-        <button class="btn-outline" onclick="pickRealFolderHT()" style="width:100%;margin-bottom:8px;"><span style="margin-right:6px;">📁</span>Add folder from computer</button>
-        <div id="ht-browser-note" class="browser-note"></div>
         <div class="clip-list" id="ht-clip-list"></div>
         <div id="ht-selected-label" style="font-size:11px;color:var(--text2);">No video selected</div>
       </div>
@@ -248,33 +330,12 @@ textarea{resize:vertical;}
   </div>
 </div>
 
-<!-- IDEAS -->
-<div id="tab-ideas" class="panel">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
-    <div></div>
-    <button class="suggest-btn" onclick="suggestWeek()" style="background:var(--green-bg);color:var(--green-text);padding:8px 16px;font-size:11px;">Suggest week</button>
-  </div>
-  <p class="sub">Click any idea to load the hook straight into the scheduler.</p>
-  <div class="sh">High jump coaching — top TikTok format</div>
-  <div id="coaching-ideas"></div>
-  <div class="sh" style="margin-top:1.25rem;">Faith and mindset — top Instagram format</div>
-  <div id="faith-ideas"></div>
-  <div class="sh" style="margin-top:1.25rem;">Cinematic and identity</div>
-  <div id="cinematic-ideas"></div>
-  <div class="sh" style="margin-top:1.25rem;">XXO Athletics brand</div>
-  <div id="brand-ideas"></div>
-  <div class="sh" style="margin-top:1.25rem;">XXO Iron Collection launch</div>
-  <div id="xxo-ideas"></div>
-</div>
-
 <!-- REMOTION -->
 <div id="tab-remotion" class="panel">
   <p class="sub">Select clips, pick a video type, and generate a Claude Remotion prompt. Use hook variations to test different openings on the same video.</p>
-  <div class="two-col" style="align-items:start;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
     <div>
       <div class="sh" style="margin-bottom:8px;">1. Select folder</div>
-      <button class="btn-outline" onclick="pickRealFolderRemote()" style="width:100%;margin-bottom:8px;"><span style="margin-right:6px;">📁</span>Add folder from computer</button>
-      <div id="rem-browser-note" class="browser-note"></div>
       <div class="folder-grid" id="folder-grid"></div>
       <div class="sh" style="margin-bottom:6px;">2. Select clips</div>
       <div class="clip-list" id="clip-list-r"></div>
@@ -301,274 +362,345 @@ textarea{resize:vertical;}
 </div>
 
 <script>
+// ============ DATA & STATE ============
 const typeColors={coaching:'p-coaching',faith:'p-faith',brand:'p-brand',cinematic:'p-cinematic',lifestyle:'p-lifestyle'};
 const calPlan={1:{type:'coaching',hook:'If you high jump, stop scrolling.',platform:'TikTok + IG'},2:{type:'faith',hook:'You are chasing something that will not satisfy you.',platform:'Instagram'},3:{type:'brand',hook:'30 hoodies. One drop. April 11th.',platform:'Both'},4:{type:'coaching',hook:'Your approach is fine. Your takeoff is killing you.',platform:'TikTok'},5:{type:'cinematic',hook:'Formed in hard places.',platform:'Instagram'},6:{type:'lifestyle',hook:'This is what building from nothing looks like.',platform:'Both'},7:{type:'faith',hook:'The hardest thing is trusting the process.',platform:'Instagram'},8:{type:'coaching',hook:'The 5 mistakes high jumpers make.',platform:'TikTok'},9:{type:'brand',hook:'Last colorway reveal before the drop.',platform:'Both'},10:{type:'brand',hook:'Nobody needs another clothing brand.',platform:'Personal account'},11:{type:'brand',hook:'DROP DAY. 30 hoodies. Link in bio.',platform:'Both'}};
 
-let posts=JSON.parse(localStorage.getItem('jl-posts')||'[]');
-let trialResults=JSON.parse(localStorage.getItem('jl-trials')||'[]');
-let realFolders=JSON.parse(localStorage.getItem('jl-real-folders')||'[]');
+const builtInIdeas={coaching:[{hook:'If you high jump, stop scrolling. This is for you.',alts:['Every high jumper needs to hear this.','High jumpers — I made this specifically for you.','This is the video I wish someone made when I started.'],platform:'TikTok primary'},{hook:'Your approach is fine. Your takeoff is killing you.',alts:['You have a great approach and still cannot jump high. Here is why.','Stop thinking about going up. Think about this instead.'],platform:'TikTok + Instagram'},{hook:'The 5 mistakes high jumpers make that cost them inches.',alts:['5 things to fix before your next competition.','If you do these 5 things your jump improves in one week.'],platform:'TikTok primary'},{hook:'Nobody teaches this part. It is why most people hit the bar.',alts:['Your coach probably never showed you this.','Everyone focuses on the approach. This actually clears the bar.'],platform:'TikTok + Instagram'}],faith:[{hook:'You are chasing something that will not satisfy you. And you already know it.',alts:['What happens when you get everything you wanted and it is still not enough.','The moment I stopped chasing athletics and started chasing something real.'],platform:'Instagram primary'},{hook:'Comparison is the thief of joy. And most athletes are getting robbed.',alts:['You are comparing your behind the scenes to everyone else\'s highlight reel.','Your chapter one is supposed to look like a chapter one.'],platform:'Instagram primary'},{hook:'The hardest thing I have ever done is trust when I could not see the result.',alts:['I had no control and that was the point.','God did not remove the hard season. He changed what I thought it was for.'],platform:'Instagram primary'},{hook:'Holding onto that is costing you more than you think.',alts:['The most athletic thing you can do has nothing to do with your body.','This one decision changed how I compete, train, and live.'],platform:'Instagram primary'}],cinematic:[{hook:'Formed in hard places.',alts:['The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.'],platform:'Instagram primary'},{hook:'You become the standard of the people around you. Choose carefully.',alts:['Protect your energy like you protect your training.','Who you spend time with is who you become.'],platform:'Instagram'}],brand:[{hook:'30 hoodies. One drop. No restock. April 11th.',alts:['Built for the athlete who shows up when nobody is watching.','Most brands make clothes. We make a statement.'],platform:'Both accounts'},{hook:'Nobody needs another clothing brand. So we built something different.',alts:['This is not a brand built around a celebrity. It is built around a standard.','Why would a D1 athlete start a clothing brand. Let me show you.'],platform:'Personal account'}]};
+
+let posts=[];
+let trialResults=[];
+let customIdeas=[];
+let ideaEdits={};
+let calPlanEdits={};
 let editingPostId=null;
+let ideaFilter='all';
+let currentMonth=new Date().getMonth();
+let currentYear=new Date().getFullYear();
+
+function loadStorage(){
+  try{posts=JSON.parse(localStorage.getItem('jl-posts')||'[]');}catch(e){posts=[];}
+  try{trialResults=JSON.parse(localStorage.getItem('jl-trials')||'[]');}catch(e){trialResults=[];}
+  try{customIdeas=JSON.parse(localStorage.getItem('jl-custom-ideas')||'[]');}catch(e){customIdeas=[];}
+  try{ideaEdits=JSON.parse(localStorage.getItem('jl-idea-edits')||'{}');}catch(e){ideaEdits={};}
+  try{calPlanEdits=JSON.parse(localStorage.getItem('jl-calplan')||'{}');}catch(e){calPlanEdits={};}
+}
 
 function savePosts(){localStorage.setItem('jl-posts',JSON.stringify(posts));updateStats();}
 function saveTrials(){localStorage.setItem('jl-trials',JSON.stringify(trialResults));}
-function saveRealFolders(){localStorage.setItem('jl-real-folders',JSON.stringify(realFolders));}
+function saveCustomIdeas(){localStorage.setItem('jl-custom-ideas',JSON.stringify(customIdeas));}
+function saveIdeaEdits(){localStorage.setItem('jl-idea-edits',JSON.stringify(ideaEdits));}
+function saveCalPlanEdits(){localStorage.setItem('jl-calplan',JSON.stringify(calPlanEdits));}
 
 function toast(msg,col){const t=document.getElementById('toast');t.textContent=msg;t.style.background=col||'var(--green)';t.style.display='block';setTimeout(()=>t.style.display='none',2000);}
-function updateStats(){document.getElementById('sched-count').textContent=posts.filter(p=>p.status==='scheduled').length;document.getElementById('posted-count').textContent=posts.filter(p=>p.status==='posted').length;}
+function updateStats(){
+  document.getElementById('sched-count').textContent=posts.filter(p=>p.status==='scheduled').length;
+  document.getElementById('posted-count').textContent=posts.filter(p=>p.status==='posted').length;
+  document.getElementById('posted-count-inline').textContent=posts.filter(p=>p.status==='posted').length;
+}
+
+// ============ CALENDAR ============
+function prevMonth(){currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--;}buildCal();}
+function nextMonth(){currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++;}buildCal();}
 
 function buildCal(){
+  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-year').textContent=monthNames[currentMonth]+' '+currentYear;
   const g=document.getElementById('cal-grid');g.innerHTML='';
   ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d=>{const h=document.createElement('div');h.className='cal-hdr';h.textContent=d;g.appendChild(h);});
-  for(let i=0;i<2;i++)g.appendChild(document.createElement('div'));
-  for(let d=1;d<=30;d++){
-    const c=calPlan[d];const up=posts.filter(p=>p.date===`2026-04-${String(d).padStart(2,'0')}`);
+
+  const fd=new Date(currentYear,currentMonth,1);const ldm=new Date(currentYear,currentMonth+1,0).getDate();
+  for(let i=0;i<fd.getDay()-1;i++)g.appendChild(document.createElement('div'));
+
+  const today=new Date();const isCurrentMonth=(today.getMonth()===currentMonth&&today.getFullYear()===currentYear);
+
+  for(let d=1;d<=ldm;d++){
+    const dateStr=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isApril2026=(currentYear===2026&&currentMonth===3);
+    const planItem=isApril2026?calPlan[d]:null;
+    const userPosts=posts.filter(p=>p.date===dateStr);
+    const planEdits=calPlanEdits[dateStr]||[];
+
     const cell=document.createElement('div');
-    cell.className='cal-day'+(c||up.length?' has-post':'')+(d===11?' drop-day':'');
+    cell.className='cal-day'+(planItem||userPosts.length||planEdits.length?' has-post':'')+(isApril2026&&d===11?' drop-day':'')+(isCurrentMonth&&d===today.getDate()?' today':'');
     cell.innerHTML=`<div class="cal-date">${d}</div>`;
-    if(c){const p=document.createElement('span');p.className='cpill '+typeColors[c.type];p.textContent=c.type;cell.appendChild(p);}
-    const trials=up.filter(p=>p.isTrial);const sched=up.filter(p=>!p.isTrial);
+
+    if(planItem){const p=document.createElement('span');p.className='cpill '+typeColors[planItem.type];p.textContent=planItem.type;p.title='Click to edit';p.onclick=(e)=>{e.stopPropagation();editCalPost(dateStr,planItem,d);};cell.appendChild(p);}
+    planEdits.forEach(edit=>{const p=document.createElement('span');p.className='cpill '+typeColors[edit.type];p.textContent=edit.type;p.title='Click to edit';p.onclick=(e)=>{e.stopPropagation();editCalPost(dateStr,edit,d);};cell.appendChild(p);});
+
+    const trials=userPosts.filter(p=>p.isTrial);const sched=userPosts.filter(p=>!p.isTrial);
     if(sched.length){const p=document.createElement('span');p.className='cpill p-scheduled';p.textContent='scheduled';cell.appendChild(p);}
     if(trials.length){const p=document.createElement('span');p.className='cpill p-trial';p.textContent=trials.length+' trial reels';cell.appendChild(p);}
-    cell.onclick=()=>showDay(d);g.appendChild(cell);
+    cell.onclick=()=>showDay(dateStr,d);g.appendChild(cell);
   }
 }
 
-function showDay(d){
-  const el=document.getElementById('day-detail');const c=calPlan[d];const up=posts.filter(p=>p.date===`2026-04-${String(d).padStart(2,'0')}`);
-  let html='';
-  if(c){html+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><span class="cpill ${typeColors[c.type]}">${c.type}</span><span style="font-size:11px;color:var(--text2);">Planned</span></div><div style="font-size:13px;font-weight:500;margin-bottom:4px;">"${c.hook}"</div><div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Platform: ${c.platform}</div>`;}
-  up.forEach(p=>{html+=`<div style="margin-top:6px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius);border-left:2px solid ${p.isTrial?'var(--blue-text)':'var(--green)'}"><div style="font-size:11px;font-weight:500;">${p.hook}</div><div style="font-size:10px;color:var(--text2);margin-top:2px;">${p.platform} · ${p.time}${p.isTrial?' · Trial Reel':''}</div></div>`;});
-  if(!c&&!up.length)html='<span style="color:var(--text3);">No post planned. Go to Scheduler to add one.</span>';
-  el.innerHTML=html;
-  document.getElementById('sch-date').value=`2026-04-${String(d).padStart(2,'0')}`;
-  switchTab('schedule',document.querySelectorAll('.nav-btn')[1]);
+function showDay(dateStr,dayNum){
+  const fd=new Date(currentYear,currentMonth+1,0).getDate();
+  const isApril2026=(currentYear===2026&&currentMonth===3);
+  const planItem=isApril2026?calPlan[dayNum]:null;
+  const planEdits=calPlanEdits[dateStr]||[];
+  const userPosts=posts.filter(p=>p.date===dateStr);
+
+  let html=`<div class="day-panel"><div class="day-panel-header">Posts for ${dateStr}</div><div class="day-panel-items">`;
+
+  if(planItem){html+=`<div class="day-item"><span class="cpill ${typeColors[planItem.type]}">${planItem.type}</span> (planned) "${planItem.hook}" — ${planItem.platform}</div>`;}
+  planEdits.forEach(e=>{html+=`<div class="day-item"><span class="cpill ${typeColors[e.type]}">${e.type}</span> (custom) "${e.hook}" — ${e.platform}</div>`;});
+  userPosts.forEach(p=>{html+=`<div class="day-item${p.isTrial?' trial':''}"><strong>${p.hook}</strong> · ${p.platform} at ${p.time}${p.isTrial?' · Trial Reel':''}</div>`;});
+
+  if(!planItem&&!planEdits.length&&!userPosts.length)html+=`<div class="empty">No posts scheduled.</div>`;
+
+  html+=`</div><div class="form-section"><label class="lbl">Add post for ${dateStr}</label><div class="form-row"><div><input type="time" id="day-time" value="09:00" placeholder="Time"></div><div><select id="day-platform"><option>Instagram</option><option>TikTok</option><option>Both</option><option>Instagram Trial Reel</option><option>Personal account</option><option>XXO Athletics account</option></select></div></div><div class="form-full"><select id="day-type"><option value="coaching">High jump coaching</option><option value="faith">Faith and mindset</option><option value="brand">XXO brand</option><option value="cinematic">Cinematic</option><option value="lifestyle">Lifestyle</option></select></div><div class="form-full"><input type="text" id="day-hook" placeholder="Hook..."></div><div class="form-full"><textarea id="day-caption" rows="2" placeholder="Caption (optional)"></textarea></div><div class="form-full"><input type="text" id="day-notes" placeholder="Notes (optional)"></div><div class="btn-row"><button class="btn-dark" onclick="addPostForDay('${dateStr}')">Add</button></div></div></div>`;
+
+  const panel=document.getElementById('day-panel');panel.innerHTML=html;panel.style.display='block';
 }
 
-function addPost(ov){
-  const date=ov?.date||document.getElementById('sch-date').value;
-  const time=ov?.time||document.getElementById('sch-time').value;
-  const platform=ov?.platform||document.getElementById('sch-platform').value;
-  const type=ov?.type||document.getElementById('sch-type').value;
-  const hook=ov?.hook||document.getElementById('sch-hook').value.trim();
-  const caption=ov?.caption||document.getElementById('sch-caption').value.trim();
-  const notes=ov?.notes||document.getElementById('sch-notes').value.trim();
-  if(!date||!hook){toast('Add a date and hook first','#D85A30');return false;}
-  if(editingPostId){
-    const p=posts.find(x=>x.id===editingPostId);
-    if(p){p.date=date;p.time=time;p.platform=platform;p.type=type;p.hook=hook;p.caption=caption;p.notes=notes;}
-    editingPostId=null;
-    document.getElementById('sch-submit-btn').textContent='Add to schedule';
-  }else{
-    posts.push({id:Date.now()+Math.random(),date,time,platform,type,hook,caption,notes,status:'scheduled',isTrial:ov?.isTrial||false,groupId:ov?.groupId||null});
-  }
-  savePosts();renderSchedule();buildCal();return true;
+function editCalPost(dateStr,item,dayNum){
+  const newHook=prompt('Edit hook:',item.hook);if(!newHook)return;
+  item.hook=newHook;
+  if(!calPlanEdits[dateStr])calPlanEdits[dateStr]=[];
+  const idx=calPlanEdits[dateStr].findIndex(x=>x.type===item.type);
+  if(idx>=0)calPlanEdits[dateStr][idx]=item;
+  else if(calPlan[dayNum]&&calPlan[dayNum].type===item.type){const newEdit={...item};calPlanEdits[dateStr].push(newEdit);}
+  saveCalPlanEdits();buildCal();toast('Post updated');
 }
 
-function clearForm(){document.getElementById('sch-hook').value='';document.getElementById('sch-caption').value='';document.getElementById('sch-notes').value='';editingPostId=null;document.getElementById('sch-submit-btn').textContent='Add to schedule';}
+function addPostForDay(dateStr){
+  const time=document.getElementById('day-time').value;const platform=document.getElementById('day-platform').value;
+  const type=document.getElementById('day-type').value;const hook=document.getElementById('day-hook').value.trim();
+  const caption=document.getElementById('day-caption').value.trim();const notes=document.getElementById('day-notes').value.trim();
+  if(!hook){toast('Enter a hook','#D85A30');return;}
+  posts.push({id:Date.now()+Math.random(),date:dateStr,time,platform,type,hook,caption,notes,status:'scheduled',isTrial:false,groupId:null});
+  savePosts();buildCal();renderSchedule();document.getElementById('day-panel').style.display='none';toast('Post added');
+}
+
+// ============ SCHEDULE / POSTS ============
+function toggleAddPostForm(){document.getElementById('add-post-form').style.display=document.getElementById('add-post-form').style.display==='none'?'block':'none';}
+function togglePostedSection(){document.getElementById('posted-section').style.display=document.getElementById('posted-section').style.display==='none'?'block':'none';}
+
+function submitAddPost(){
+  const date=document.getElementById('add-date').value;const time=document.getElementById('add-time').value;
+  const platform=document.getElementById('add-platform').value;const type=document.getElementById('add-type').value;
+  const hook=document.getElementById('add-hook').value.trim();const caption=document.getElementById('add-caption').value.trim();
+  const notes=document.getElementById('add-notes').value.trim();
+  if(!date||!hook){toast('Add a date and hook','#D85A30');return;}
+  posts.push({id:Date.now()+Math.random(),date,time,platform,type,hook,caption,notes,status:'scheduled',isTrial:false,groupId:null});
+  savePosts();renderSchedule();buildCal();
+  document.getElementById('add-date').value='';document.getElementById('add-hook').value='';
+  document.getElementById('add-caption').value='';document.getElementById('add-notes').value='';
+  toggleAddPostForm();toast('Post scheduled');
+}
+
 function markPosted(id){const p=posts.find(x=>x.id===id);if(p){p.status='posted';savePosts();renderSchedule();toast('Marked as posted');}}
 function deletePost(id){posts=posts.filter(x=>x.id!==id);savePosts();renderSchedule();buildCal();toast('Removed');}
 
-function editPost(id){
-  const p=posts.find(x=>x.id===id);
-  if(!p)return;
-  document.getElementById('sch-date').value=p.date;
-  document.getElementById('sch-time').value=p.time;
-  document.getElementById('sch-platform').value=p.platform;
-  document.getElementById('sch-type').value=p.type;
-  document.getElementById('sch-hook').value=p.hook;
-  document.getElementById('sch-caption').value=p.caption;
-  document.getElementById('sch-notes').value=p.notes;
-  editingPostId=id;
-  document.getElementById('sch-submit-btn').textContent='Save changes';
-  switchTab('schedule',document.querySelectorAll('.nav-btn')[1]);
+function startEditPost(id){editingPostId=id;renderSchedule();}
+function saveEditPost(id){
+  const p=posts.find(x=>x.id===id);if(!p)return;
+  p.date=document.getElementById('edit-date-'+id).value;
+  p.time=document.getElementById('edit-time-'+id).value;
+  p.platform=document.getElementById('edit-platform-'+id).value;
+  p.type=document.getElementById('edit-type-'+id).value;
+  p.hook=document.getElementById('edit-hook-'+id).value.trim();
+  p.caption=document.getElementById('edit-caption-'+id).value.trim();
+  p.notes=document.getElementById('edit-notes-'+id).value.trim();
+  savePosts();renderSchedule();buildCal();editingPostId=null;toast('Post updated');
 }
+function cancelEditPost(){editingPostId=null;renderSchedule();}
 
 function renderSchedule(){
   const upcoming=posts.filter(p=>p.status==='scheduled').sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
   const posted=posts.filter(p=>p.status==='posted').sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('upcoming-list').innerHTML=upcoming.length?upcoming.map(p=>`<div class="sched-item${p.isTrial?' trial-item':''}"><div class="sched-dot ${p.isTrial?'dot-trial':'dot-scheduled'}"></div><div class="sched-info"><div class="sched-hook">${p.hook}</div><div class="sched-meta">${p.date} · ${p.time} · ${p.platform}${p.isTrial?' · Trial Reel':''}</div>${p.notes?`<div class="sched-meta">Note: ${p.notes}</div>`:''}</div><div class="sched-actions"><button class="btn-xs-outline" onclick="editPost(${p.id})">Edit</button><button class="btn-green" onclick="markPosted(${p.id})" style="font-size:10px;padding:4px 8px;">Posted</button><button class="btn-xs-outline" onclick="deletePost(${p.id})">Remove</button></div></div>`).join(''):'<div class="empty">No upcoming posts.</div>';
-  document.getElementById('posted-list').innerHTML=posted.length?posted.map(p=>`<div class="sched-item posted${p.isTrial?' trial-item':''}"><div class="sched-dot dot-posted"></div><div class="sched-info"><div class="sched-hook">${p.hook}</div><div class="sched-meta">${p.date} · ${p.platform}${p.isTrial?' · Trial Reel':''}</div></div><div class="sched-actions"><button class="btn-xs-outline" onclick="deletePost(${p.id})">Remove</button></div></div>`).join(''):'<div class="empty">No posts marked as posted yet.</div>';
+
+  document.getElementById('upcoming-list').innerHTML=upcoming.length?upcoming.map(p=>{
+    if(editingPostId===p.id){
+      return `<div class="sched-item form-mode">
+        <div class="sched-edit-form">
+          <div class="form-row">
+            <div><label class="lbl">Date</label><input type="date" id="edit-date-${p.id}" value="${p.date}"></div>
+            <div><label class="lbl">Time</label><input type="time" id="edit-time-${p.id}" value="${p.time}"></div>
+          </div>
+          <div class="form-row">
+            <div><label class="lbl">Platform</label><select id="edit-platform-${p.id}"><option>${p.platform}</option></select></div>
+            <div><label class="lbl">Type</label><select id="edit-type-${p.id}"><option value="${p.type}">${p.type}</option></select></div>
+          </div>
+          <div class="form-full"><input type="text" id="edit-hook-${p.id}" value="${p.hook}"></div>
+          <div class="form-full"><textarea id="edit-caption-${p.id}" rows="2">${p.caption}</textarea></div>
+          <div class="form-full"><input type="text" id="edit-notes-${p.id}" value="${p.notes}"></div>
+          <div class="btn-row">
+            <button class="btn-dark" onclick="saveEditPost(${p.id})">Save</button>
+            <button class="btn-outline" onclick="cancelEditPost()">Cancel</button>
+          </div>
+        </div>
+      </div>`;
+    }
+    return `<div class="sched-item${p.isTrial?' trial-item':''}">
+      <div class="sched-dot ${p.isTrial?'dot-trial':'dot-scheduled'}"></div>
+      <div class="sched-info">
+        <div class="sched-hook">${p.hook}</div>
+        <div class="sched-meta">${p.date} · ${p.time} · ${p.platform}${p.isTrial?' · Trial Reel':''}</div>
+        ${p.notes?`<div class="sched-meta">Note: ${p.notes}</div>`:''}
+      </div>
+      <div class="sched-actions">
+        <button class="btn-green" onclick="markPosted(${p.id})" style="font-size:10px;padding:4px 8px;">Posted</button>
+        <button class="btn-xs-outline" onclick="startEditPost(${p.id})">Edit</button>
+        <button class="btn-xs-outline" onclick="deletePost(${p.id})">Remove</button>
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty">No upcoming posts.</div>';
+
+  document.getElementById('posted-list').innerHTML=posted.length?posted.map(p=>`<div class="sched-item posted${p.isTrial?' trial-item':''}">
+    <div class="sched-dot dot-posted"></div>
+    <div class="sched-info"><div class="sched-hook">${p.hook}</div><div class="sched-meta">${p.date} · ${p.platform}${p.isTrial?' · Trial Reel':''}</div></div>
+    <div class="sched-actions"><button class="btn-xs-outline" onclick="deletePost(${p.id})">Remove</button></div>
+  </div>`).join(''):'<div class="empty">No posted items yet.</div>';
+
   updateStats();
 }
 
-// HOOK TESTER
-const folders=[{name:'Photoshoot',clips:['Hero walk away','Lean pose front','Cinematic profile','Jump sequence slow mo']},{name:'Training',clips:['Morning lift session','Approach drills','Bar clearance attempt']},{name:'Brand / XXO',clips:['Hoodie unboxing raw','Product close up','Colorway flat lay']},{name:'Lifestyle',clips:['Campus walk morning','Track field wide shot']}];
-let htClip=null;
-let hookVals=['','','','',''];
+// ============ IDEAS ============
+function getAllIdeas(){
+  let all=[];
+  Object.entries(builtInIdeas).forEach(([type,list])=>{
+    list.forEach((item,idx)=>{
+      const key=type+'-'+idx;
+      const edited=ideaEdits[key]||{};
+      all.push({...item,...edited,type,custom:false,key});
+    });
+  });
+  customIdeas.forEach(item=>{all.push({...item,custom:true,key:'custom-'+item.id});});
+  return all;
+}
 
+function filterIdeas(filter){
+  ideaFilter=filter;
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`button[onclick="filterIdeas('${filter}')"]`).classList.add('active');
+  renderIdeas();
+}
+
+function toggleAddIdeaForm(){document.getElementById('add-idea-form').style.display=document.getElementById('add-idea-form').style.display==='none'?'block':'none';}
+
+function submitAddIdea(){
+  const cat=document.getElementById('add-idea-category').value;
+  const hook=document.getElementById('add-idea-hook').value.trim();
+  const alts=(document.getElementById('add-idea-alts').value||'').split('\n').map(s=>s.trim()).filter(s=>s);
+  const platform=document.getElementById('add-idea-platform').value.trim();
+  if(!hook){toast('Add a hook','#D85A30');return;}
+  const id=Date.now();customIdeas.push({id,type:cat,hook,alts,platform});
+  saveCustomIdeas();renderIdeas();
+  document.getElementById('add-idea-category').value='coaching';
+  document.getElementById('add-idea-hook').value='';document.getElementById('add-idea-alts').value='';
+  document.getElementById('add-idea-platform').value='';toggleAddIdeaForm();toast('Idea saved');
+}
+
+function renderIdeas(){
+  const all=getAllIdeas();const filtered=ideaFilter==='all'?all:(ideaFilter==='custom'?all.filter(i=>i.custom):all.filter(i=>i.type===ideaFilter));
+  document.getElementById('ideas-list').innerHTML=filtered.length?filtered.map((item,idx)=>{
+    const editKey='idea-edit-'+item.key;
+    if(editingPostId===editKey){
+      return `<div class="idea-card form-mode">
+        <div class="idea-form">
+          <label class="lbl">Hook</label><input type="text" id="edit-hook-${item.key}" value="${item.hook}">
+          <label class="lbl">Alt angles (one per line)</label><textarea id="edit-alts-${item.key}" rows="3">${item.alts.join('\n')}</textarea>
+          <label class="lbl">Platform</label><input type="text" id="edit-platform-${item.key}" value="${item.platform}">
+          <div class="btn-row">
+            <button class="btn-dark" onclick="saveEditIdea('${item.key}')">Save</button>
+            <button class="btn-outline" onclick="cancelEditIdea()">Cancel</button>
+          </div>
+        </div>
+      </div>`;
+    }
+    return `<div class="idea-card">
+      <div class="idea-top">
+        <span class="cpill ${typeColors[item.type]}">${item.type}</span>
+        ${item.custom?'<span class="idea-badge">custom</span>':''}
+      </div>
+      <div class="idea-hook">"${item.hook}"</div>
+      <div class="idea-alts">Alts: ${item.alts.map(a=>`"${a}"`).join(' · ')}</div>
+      <div class="idea-plat">${item.platform}</div>
+      <div class="idea-actions">
+        <span onclick="scheduleIdea('${item.hook}','${item.type}')" title="Schedule this">→</span>
+        <span onclick="startEditIdea('${item.key}')" title="Edit">✎</span>
+        <span onclick="deleteIdea('${item.key}')" title="Delete">×</span>
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty">No ideas in this category.</div>';
+}
+
+function scheduleIdea(hook,type){
+  document.getElementById('add-hook').value=hook;
+  document.getElementById('add-type').value=type;
+  document.getElementById('add-post-form').style.display='block';
+  document.getElementById('add-hook').focus();
+  toast('Hook loaded to Add Post form');
+}
+
+function startEditIdea(key){editingPostId='idea-edit-'+key;renderIdeas();}
+function saveEditIdea(key){
+  const hook=document.getElementById('edit-hook-'+key).value.trim();
+  const alts=(document.getElementById('edit-alts-'+key).value||'').split('\n').map(s=>s.trim()).filter(s=>s);
+  const platform=document.getElementById('edit-platform-'+key).value.trim();
+  if(key.startsWith('custom-')){
+    const id=parseInt(key.split('-')[1]);const item=customIdeas.find(x=>x.id===id);
+    if(item){item.hook=hook;item.alts=alts;item.platform=platform;saveCustomIdeas();}
+  }else{
+    const[type,idx]=key.split('-');ideaEdits[key]={hook,alts,platform};saveIdeaEdits();
+  }
+  editingPostId=null;renderIdeas();toast('Idea updated');
+}
+function cancelEditIdea(){editingPostId=null;renderIdeas();}
+function deleteIdea(key){
+  if(!confirm('Delete this idea?'))return;
+  if(key.startsWith('custom-')){
+    const id=parseInt(key.split('-')[1]);customIdeas=customIdeas.filter(x=>x.id!==id);saveCustomIdeas();
+  }else{delete ideaEdits[key];saveIdeaEdits();}
+  renderIdeas();toast('Idea removed');
+}
+
+// ============ HOOK TESTER ============
+const folders=[{name:'Photoshoot',clips:['Hero walk away','Lean pose front','Cinematic profile','Jump sequence slow mo']},{name:'Training',clips:['Morning lift session','Approach drills','Bar clearance attempt']},{name:'Brand / XXO',clips:['Hoodie unboxing raw','Product close up','Colorway flat lay']},{name:'Lifestyle',clips:['Campus walk morning','Track field wide shot']}];
+let htClip=null;let hookVals=['','','','',''];
 const hookSuggestions={coaching:['If you high jump, stop scrolling. This is for you.','Your approach is fine. Your takeoff is killing you.','Nobody teaches this part. It is why most people hit the bar.','The 5 mistakes high jumpers make that cost them inches.','The one thing Barshim does that nobody talks about.'],faith:['You are chasing something that will not satisfy you.','Comparison is the thief of joy. And most athletes are getting robbed.','The hardest thing I have done as an athlete is trust when I could not see.','Holding onto that is costing you more than you think.','What happens when you get everything and it is still not enough.'],brand:['30 hoodies. One drop. No restock. April 11th.','Nobody needs another clothing brand. So we built something different.','Built for the athlete who shows up when nobody is watching.','The X is the setback. The O is what waits on the other side.','Most brands make clothes. We make a statement.'],cinematic:['Formed in hard places.','The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.','This is what the process actually looks like.'],lifestyle:['This is what building from nothing looks like.','You become the standard of the people around you.','Protect your energy like you protect your training.','The most important decision has nothing to do with training.','Who you spend time with is who you become.']};
 
-function buildFolderList(){
-  const list=[...folders];
-  realFolders.forEach(rf=>{if(!list.find(f=>f.name===rf.name)){list.push({name:rf.name+' (live)',clips:rf.clips||[]});}});
-  return list;
-}
-
-function renderHtClips(){
-  const fi=parseInt(document.getElementById('ht-folder').value);
-  const list=buildFolderList();
-  const c=document.getElementById('ht-clip-list');
-  htClip=null;document.getElementById('ht-selected-label').textContent='No video selected';
-  if(fi>=list.length){c.innerHTML='';return;}
-  c.innerHTML=list[fi].clips.map((clip,i)=>`<div class="clip" id="htc-${i}" onclick="selectHtClip(${fi},${i},'${clip}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${clip}</div><div class="clip-chk"></div></div>`).join('');
-}
-
-function selectHtClip(fi,ci,name){
-  document.querySelectorAll('#ht-clip-list .clip').forEach(c=>{c.classList.remove('sel','clip-single');c.querySelector('.clip-chk').textContent='';});
-  const el=document.getElementById(`htc-${ci}`);el.classList.add('sel','clip-single');el.querySelector('.clip-chk').textContent='✓';
-  const list=buildFolderList();
-  htClip={folder:list[fi].name,clip:name};document.getElementById('ht-selected-label').textContent=`Selected: ${name} (${list[fi].name})`;
-  updateSchedulePreview();
-}
-
-function pickRealFolderHT(){
-  if(!window.showDirectoryPicker){document.getElementById('ht-browser-note').innerHTML='<span style="color:#D85A30;">Not supported in this browser (use Chrome)</span>';return;}
-  window.showDirectoryPicker().then(async(handle)=>{
-    const files=[];const videoExts=['.mp4','.mov','.avi','.webm','.mkv'];
-    for await(const entry of handle.values()){if(entry.kind==='file'){const ext=entry.name.substring(entry.name.lastIndexOf('.')).toLowerCase();if(videoExts.includes(ext))files.push(entry.name);}}
-    if(files.length){
-      const folderName=handle.name;
-      realFolders.push({name:folderName,clips:files});
-      saveRealFolders();
-      const sel=document.getElementById('ht-folder');
-      const opt=document.createElement('option');opt.value=folders.length+realFolders.length-1;opt.textContent=folderName+' (live)';sel.appendChild(opt);
-      sel.value=folders.length+realFolders.length-1;
-      renderHtClips();
-      toast(`Added ${folderName} with ${files.length} video files`);
-    }else{toast('No video files found in folder','#D85A30');}
-  }).catch(e=>{if(e.name!=='AbortError')toast('Error accessing folder','#D85A30');});
-}
-
-function renderHookInputs(){
-  document.getElementById('hook-inputs').innerHTML=hookVals.map((v,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-size:10px;font-weight:500;color:var(--text2);min-width:20px;">V${i+1}</div><input type="text" value="${v.replace(/"/g,'&quot;')}" placeholder="Hook variation ${i+1}..." style="flex:1;font-size:12px;" oninput="hookVals[${i}]=this.value;updateSchedulePreview();"></div>`).join('');
-}
-
+function renderHtClips(){const fi=parseInt(document.getElementById('ht-folder').value);const c=document.getElementById('ht-clip-list');htClip=null;document.getElementById('ht-selected-label').textContent='No video selected';c.innerHTML=folders[fi].clips.map((clip,i)=>`<div class="clip" id="htc-${i}" onclick="selectHtClip(${fi},${i},'${clip}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${clip}</div><div class="clip-chk"></div></div>`).join('');}
+function selectHtClip(fi,ci,name){document.querySelectorAll('#ht-clip-list .clip').forEach(c=>{c.classList.remove('sel','clip-single');c.querySelector('.clip-chk').textContent='';});const el=document.getElementById(`htc-${ci}`);el.classList.add('sel','clip-single');el.querySelector('.clip-chk').textContent='✓';htClip={folder:folders[fi].name,clip:name};document.getElementById('ht-selected-label').textContent=`Selected: ${name} (${folders[fi].name})`;updateSchedulePreview();}
+function renderHookInputs(){document.getElementById('hook-inputs').innerHTML=hookVals.map((v,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-size:10px;font-weight:500;color:var(--text2);min-width:20px;">V${i+1}</div><input type="text" value="${v.replace(/"/g,'&quot;')}" placeholder="Hook variation ${i+1}..." style="flex:1;font-size:12px;" oninput="hookVals[${i}]=this.value;updateSchedulePreview();"></div>`).join('');}
 function suggestHooks(){const type=document.getElementById('ht-type').value;hookVals=(hookSuggestions[type]||hookSuggestions.cinematic).slice(0,5);renderHookInputs();updateSchedulePreview();toast('Suggestions loaded — edit as needed');}
-
-function updateSchedulePreview(){
-  const date=document.getElementById('ht-date').value;const st=document.getElementById('ht-start-time').value;
-  const filled=hookVals.filter(h=>h.trim());const prev=document.getElementById('ht-preview');
-  if(!date||!st){prev.textContent='Set a date and start time to see the schedule.';return;}
-  if(!filled.length){prev.textContent='Add hook variations to see schedule preview.';return;}
-  const[sh,sm]=st.split(':').map(Number);
-  const mainT=`${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`;
-  let lines=[`${mainT} — Main video → Instagram + TikTok`];
-  filled.forEach((h,i)=>{const tot=sh*60+sm+(i+1)*120;const th=Math.floor(tot/60)%24;const tm=tot%60;lines.push(`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')} — V${i+1} trial reel → Instagram: "${h.substring(0,38)}${h.length>38?'...':''}"`);});
-  prev.innerHTML=lines.map(l=>`<div>${l}</div>`).join('');
-}
-
-function scheduleAll(){
-  if(!htClip){toast('Select a base video first','#D85A30');return;}
-  const date=document.getElementById('ht-date').value;const st=document.getElementById('ht-start-time').value;
-  const mainHook=document.getElementById('ht-main-hook').value.trim();const caption=document.getElementById('ht-caption').value.trim();
-  const type=document.getElementById('ht-type').value;
-  if(!date||!mainHook){toast('Add a date and main hook first','#D85A30');return;}
-  const filled=hookVals.filter(h=>h.trim());
-  if(!filled.length){toast('Add at least one hook variation','#D85A30');return;}
-  const[sh,sm]=st.split(':').map(Number);const gid=Date.now();
-  const mainT=`${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`;
-  posts.push({id:Date.now()+Math.random(),date,time:mainT,platform:'Both (Instagram + TikTok)',type,hook:mainHook,caption,notes:`Base: ${htClip.clip}`,status:'scheduled',isTrial:false,groupId:gid});
-  filled.forEach((h,i)=>{const tot=sh*60+sm+(i+1)*120;const th=Math.floor(tot/60)%24;const tm=tot%60;posts.push({id:Date.now()+Math.random()+i,date,time:`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}`,platform:'Instagram Trial Reel',type,hook:h,caption:'',notes:`V${i+1} — base: ${htClip.clip}`,status:'scheduled',isTrial:true,groupId:gid});});
-  trialResults.push({groupId:gid,date,baseVideo:htClip.clip,mainHook,hooks:filled,ratings:filled.map(()=>0),winner:null,notes:''});
-  savePosts();saveTrials();renderSchedule();buildCal();renderTrialResults();
-  toast(`Scheduled: 1 main + ${filled.length} trial reels`);
-}
+function updateSchedulePreview(){const date=document.getElementById('ht-date').value;const st=document.getElementById('ht-start-time').value;const filled=hookVals.filter(h=>h.trim());const prev=document.getElementById('ht-preview');if(!date||!st){prev.textContent='Set a date and start time to see the schedule.';return;}if(!filled.length){prev.textContent='Add hook variations to see schedule preview.';return;}const[sh,sm]=st.split(':').map(Number);const mainT=`${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`;let lines=[`${mainT} — Main video → Instagram + TikTok`];filled.forEach((h,i)=>{const tot=sh*60+sm+(i+1)*120;const th=Math.floor(tot/60)%24;const tm=tot%60;lines.push(`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')} — V${i+1} trial reel → Instagram: "${h.substring(0,38)}${h.length>38?'...':''}"`);});prev.innerHTML=lines.map(l=>`<div>${l}</div>`).join('');}
+function scheduleAll(){if(!htClip){toast('Select a base video first','#D85A30');return;}const date=document.getElementById('ht-date').value;const st=document.getElementById('ht-start-time').value;const mainHook=document.getElementById('ht-main-hook').value.trim();const caption=document.getElementById('ht-caption').value.trim();const type=document.getElementById('ht-type').value;if(!date||!mainHook){toast('Add a date and main hook first','#D85A30');return;}const filled=hookVals.filter(h=>h.trim());if(!filled.length){toast('Add at least one hook variation','#D85A30');return;}const[sh,sm]=st.split(':').map(Number);const gid=Date.now();const mainT=`${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`;posts.push({id:Date.now()+Math.random(),date,time:mainT,platform:'Both (Instagram + TikTok)',type,hook:mainHook,caption,notes:`Base: ${htClip.clip}`,status:'scheduled',isTrial:false,groupId:gid});filled.forEach((h,i)=>{const tot=sh*60+sm+(i+1)*120;const th=Math.floor(tot/60)%24;const tm=tot%60;posts.push({id:Date.now()+Math.random()+i,date,time:`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}`,platform:'Instagram Trial Reel',type,hook:h,caption:'',notes:`V${i+1} — base: ${htClip.clip}`,status:'scheduled',isTrial:true,groupId:gid});});trialResults.push({groupId:gid,date,baseVideo:htClip.clip,mainHook,hooks:filled,ratings:filled.map(()=>0),winner:null,notes:''});savePosts();saveTrials();renderSchedule();buildCal();renderTrialResults();toast(`Scheduled: 1 main + ${filled.length} trial reels`);}
 
 function buildTypePrompt(type){return{coaching:`Style: Clear, educational. Slow motion on technique. Numbered text overlays.\nPacing: 2-4 sec avg clips, cut on beat.\nAudio: Low energy background, clear voiceover.\nStructure: Hook → numbered tips → clear takeaway. Under 60 seconds.`,faith:`Style: Personal, cinematic. Natural light, film grain, cool muted tones.\nPacing: Very slow, deliberate pauses, silence intentional.\nAudio: Near silence, voiceover carries the emotion.\nStructure: Tension → experience → faith shift → message → single closing line.`,brand:`Style: Dark, cinematic, premium. Deep blacks, muted tones, film grain.\nColor: Darker and more contrasty, product stands out.\nAudio: Minimal ambient sound.\nEnd: XXO Athletics + April 11th.`,cinematic:`Style: Cool, desaturated, underexposed. Film grain 25. Slow motion. Avg clip 3-6 sec.\nColor: Pull exposure down, reduce saturation 20%, lift contrast.\nAudio: Ambient instrumental no lyrics. Voiceover slow with pauses.\nEnd: Single closing line then fade to black.`,lifestyle:`Style: Light, natural, personal. Warm tones, day in the life feel.\nPacing: Relaxed, conversational.\nAudio: Upbeat low energy background track.`}[type]||'';}
-
-function generateRemotionPrompts(){
-  if(!htClip){toast('Select a base video first','#D85A30');return;}
-  const type=document.getElementById('ht-type').value;const mainHook=document.getElementById('ht-main-hook').value.trim();
-  const filled=hookVals.filter(h=>h.trim());if(!filled.length&&!mainHook){toast('Add hooks first','#D85A30');return;}
-  const sec=document.getElementById('ht-prompts-section');const list=document.getElementById('ht-prompts-list');sec.style.display='block';
-  const typeInstr=buildTypePrompt(type);
-  const allHooks=[mainHook,...filled].filter(Boolean);
-  list.innerHTML=allHooks.map((h,i)=>{const isMain=i===0;const id=`htp-${i}`;const prompt=isMain?`Edit this video: ${htClip.clip}\nHook (first 3-5 seconds): "${h}"\n\n${typeInstr}\n\nPost to: Instagram + TikTok.`:`Keep the FULL VIDEO IDENTICAL to the main version.\nSwap ONLY the first 3-5 seconds with this hook.\n\nHook V${i}: "${h}"\nBase clip: ${htClip.clip}\n\n${typeInstr}\n\nPost to: Instagram Trial Reel only.`;return `<div style="margin-bottom:12px;"><div style="font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">${isMain?'Main (Instagram + TikTok)':`Trial reel V${i} (Instagram trial reel)`}</div><div class="prompt-box" id="${id}" style="font-size:10px;">${prompt}</div><button class="btn-outline" style="font-size:10px;padding:5px 10px;" onclick="copyEl('${id}',this)">Copy ${isMain?'main':'V'+i} prompt</button></div>`;}).join('');
-}
-
-function renderTrialResults(){
-  const list=document.getElementById('trial-results-list');const empty=document.getElementById('trial-empty');
-  if(!trialResults.length){list.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  list.innerHTML=trialResults.map((r,ri)=>`<div style="background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:11px;font-weight:500;">${r.baseVideo}</div><div style="font-size:10px;color:var(--text2);">${r.date}</div>${r.winner!==null?`<span style="background:#F0997B;color:#712B13;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;">Winner: V${r.winner+1}</span>`:''}</div>${r.hooks.map((h,hi)=>`<div style="padding:8px 0;border-top:0.5px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div style="font-size:11px;font-weight:500;">V${hi+1}: "${h.substring(0,45)}${h.length>45?'...':''}"</div><button onclick="setWinner(${ri},${hi})" style="font-size:10px;padding:3px 8px;border:0.5px solid var(--border2);border-radius:3px;background:${r.winner===hi?'var(--accent)':'transparent'};color:${r.winner===hi?'var(--accent-text)':'var(--text)'};cursor:pointer;">Winner</button></div><div style="display:flex;gap:3px;">${[1,2,3,4,5].map(s=>`<span class="star${r.ratings[hi]>=s?' on':''}" onclick="rateTrial(${ri},${hi},${s})">&#9733;</span>`).join('')}</div></div>`).join('')}<div style="margin-top:8px;"><input type="text" value="${r.notes||''}" placeholder="Notes on what won and why..." style="font-size:11px;" oninput="trialResults[${ri}].notes=this.value;saveTrials();"></div></div>`).join('');
-}
-
+function generateRemotionPrompts(){if(!htClip){toast('Select a base video first','#D85A30');return;}const type=document.getElementById('ht-type').value;const mainHook=document.getElementById('ht-main-hook').value.trim();const filled=hookVals.filter(h=>h.trim());if(!filled.length&&!mainHook){toast('Add hooks first','#D85A30');return;}const sec=document.getElementById('ht-prompts-section');const list=document.getElementById('ht-prompts-list');sec.style.display='block';const typeInstr=buildTypePrompt(type);const allHooks=[mainHook,...filled].filter(Boolean);list.innerHTML=allHooks.map((h,i)=>{const isMain=i===0;const id=`htp-${i}`;const prompt=isMain?`Edit this video: ${htClip.clip}\nHook (first 3-5 seconds): "${h}"\n\n${typeInstr}\n\nPost to: Instagram + TikTok.`:`Keep the FULL VIDEO IDENTICAL to the main version.\nSwap ONLY the first 3-5 seconds with this hook.\n\nHook V${i}: "${h}"\nBase clip: ${htClip.clip}\n\n${typeInstr}\n\nPost to: Instagram Trial Reel only.`;return `<div style="margin-bottom:12px;"><div style="font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">${isMain?'Main (Instagram + TikTok)':`Trial reel V${i} (Instagram trial reel)`}</div><div class="prompt-box" id="${id}" style="font-size:10px;">${prompt}</div><button class="btn-outline" style="font-size:10px;padding:5px 10px;" onclick="copyEl('${id}',this)">Copy ${isMain?'main':'V'+i} prompt</button></div>`;}).join('');}
+function renderTrialResults(){const list=document.getElementById('trial-results-list');const empty=document.getElementById('trial-empty');if(!trialResults.length){list.innerHTML='';empty.style.display='block';return;}empty.style.display='none';list.innerHTML=trialResults.map((r,ri)=>`<div style="background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:11px;font-weight:500;">${r.baseVideo}</div><div style="font-size:10px;color:var(--text2);">${r.date}</div>${r.winner!==null?`<span style="background:#F0997B;color:#712B13;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;">Winner: V${r.winner+1}</span>`:''}</div>${r.hooks.map((h,hi)=>`<div style="padding:8px 0;border-top:0.5px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div style="font-size:11px;font-weight:500;">V${hi+1}: "${h.substring(0,45)}${h.length>45?'...':''}"</div><button onclick="setWinner(${ri},${hi})" style="font-size:10px;padding:3px 8px;border:0.5px solid var(--border2);border-radius:3px;background:${r.winner===hi?'var(--accent)':'transparent'};color:${r.winner===hi?'var(--accent-text)':'var(--text)'};cursor:pointer;">Winner</button></div><div style="display:flex;gap:3px;">${[1,2,3,4,5].map(s=>`<span class="star${r.ratings[hi]>=s?' on':''}" onclick="rateTrial(${ri},${hi},${s})">&#9733;</span>`).join('')}</div></div>`).join('')}<div style="margin-top:8px;"><input type="text" value="${r.notes||''}" placeholder="Notes on what won and why..." style="font-size:11px;" oninput="trialResults[${ri}].notes=this.value;saveTrials();"></div></div>`).join('');}
 function rateTrial(ri,hi,rating){trialResults[ri].ratings[hi]=rating;saveTrials();renderTrialResults();}
 function setWinner(ri,hi){trialResults[ri].winner=hi;saveTrials();renderTrialResults();toast(`V${hi+1} marked as winner`);}
 
-// IDEAS
-const ideas={coaching:[{hook:'If you high jump, stop scrolling. This is for you.',alts:['Every high jumper needs to hear this.','High jumpers — I made this specifically for you.','This is the video I wish someone made when I started.'],platform:'TikTok primary'},{hook:'Your approach is fine. Your takeoff is killing you.',alts:['You have a great approach and still cannot jump high. Here is why.','Stop thinking about going up. Think about this instead.'],platform:'TikTok + Instagram'},{hook:'The 5 mistakes high jumpers make that cost them inches.',alts:['5 things to fix before your next competition.','If you do these 5 things your jump improves in one week.'],platform:'TikTok primary'},{hook:'Nobody teaches this part. It is why most people hit the bar.',alts:['Your coach probably never showed you this.','Everyone focuses on the approach. This actually clears the bar.'],platform:'TikTok + Instagram'}],faith:[{hook:'You are chasing something that will not satisfy you. And you already know it.',alts:['What happens when you get everything you wanted and it is still not enough.','The moment I stopped chasing athletics and started chasing something real.'],platform:'Instagram primary'},{hook:'Comparison is the thief of joy. And most athletes are getting robbed.',alts:['You are comparing your behind the scenes to everyone else\'s highlight reel.','Your chapter one is supposed to look like a chapter one.'],platform:'Instagram primary'},{hook:'The hardest thing I have ever done is trust when I could not see the result.',alts:['I had no control and that was the point.','God did not remove the hard season. He changed what I thought it was for.'],platform:'Instagram primary'},{hook:'Holding onto that is costing you more than you think.',alts:['The most athletic thing you can do has nothing to do with your body.','This one decision changed how I compete, train, and live.'],platform:'Instagram primary'}],cinematic:[{hook:'Formed in hard places.',alts:['The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.'],platform:'Instagram primary'},{hook:'You become the standard of the people around you. Choose carefully.',alts:['Protect your energy like you protect your training.','Who you spend time with is who you become.'],platform:'Instagram'}],brand:[{hook:'30 hoodies. One drop. No restock. April 11th.',alts:['Built for the athlete who shows up when nobody is watching.','Most brands make clothes. We make a statement.'],platform:'Both accounts'},{hook:'Nobody needs another clothing brand. So we built something different.',alts:['This is not a brand built around a celebrity. It is built around a standard.','Why would a D1 athlete start a clothing brand. Let me show you.'],platform:'Personal account'}],xxo:[{hook:'Started from $0. Now we drop April 11th.',alts:['From nothing to ready.','The journey from zero.'],platform:'Personal account'},{hook:'The X is the setback. The O is what you build after.',alts:['Every failure is part of the story.','Forged by the hard moments.'],platform:'Both accounts'},{hook:'This is what starting from nothing actually looks like.',alts:['Raw footage of the early days.','No filter. No BS. Just the work.'],platform:'TikTok'},{hook:'30 hoodies. Built by failure. Available April 11th.',alts:['Made for people who show up.','Iron Collection — forged in struggle.'],platform:'Both accounts'},{hook:'Why I spent my last money on hoodies instead of more ads.',alts:['The bet I made.','Betting on the mission over the metrics.'],platform:'Personal account'},{hook:'5 days until drop. Here is what you need to know.',alts:['Iron Collection countdown.','Almost here.'],platform:'Both accounts'},{hook:'We made it to launch day. Thank you for being early.',alts:['Drop day. We are live.','It happened. XXO Iron Collection is here.'],platform:'Both accounts'},{hook:'Thank you for believing before we shipped a single hoodie.',alts:['This is just the beginning.','To everyone who said yes first.'],platform:'Personal account'}]};
-
-function renderIdeas(){Object.entries(ideas).forEach(([type,list])=>{const c=document.getElementById(type+'-ideas');if(!c)return;c.innerHTML='';list.forEach(item=>{const d=document.createElement('div');d.className='idea-card';d.innerHTML=`<div class="idea-top"><span class="cpill ${typeColors[type]||'p-brand'}">${type}</span></div><div class="idea-hook">"${item.hook}"</div><div class="idea-alts">Alts: ${item.alts.map(a=>`"${a}"`).join(' · ')}</div><div class="idea-plat">${item.platform}</div>`;d.onclick=()=>{document.getElementById('sch-hook').value=item.hook;document.getElementById('sch-type').value=type;switchTab('schedule',document.querySelectorAll('.nav-btn')[1]);toast('Hook loaded to scheduler');};c.appendChild(d);});});}
-
-function suggestWeek(){
-  const mon=new Date('2026-03-30');const allIdeas=Object.values(ideas).flat();
-  const selected=[];const types=['coaching','faith','cinematic','brand','xxo'];
-  types.forEach(type=>{const pool=ideas[type]||[];if(pool.length)selected.push(pool[Math.floor(Math.random()*pool.length)]);});
-  if(selected.length<5){toast('Not enough idea types available','#D85A30');return;}
-  for(let i=0;i<5;i++){
-    const date=new Date(mon);date.setDate(date.getDate()+i);
-    const dateStr=`2026-03-${String(date.getDate()).padStart(2,'0')}`;
-    addPost({date:dateStr,time:'',platform:'Both',type:selected[i].type||selected[i].platform.split(' ')[0],hook:selected[i].hook,caption:'',notes:'From week suggestion'});
-  }
-  toast('5 ideas added to your schedule — set your times in Scheduler');
-}
-
-// REMOTION TAB
-let selFolder=0,selClips=new Set(),hookVars=[],selVtype=0;
-const vtypes=['Cinematic inspirational','High jump coaching','XXO brand content','Faith and mindset'];
-const vtypeKeys=['cinematic','coaching','brand','faith'];
-
-function buildFolderListRemote(){
-  const list=[...folders];
-  realFolders.forEach(rf=>{if(!list.find(f=>f.name===rf.name)){list.push({name:rf.name+' (live)',clips:rf.clips||[]});}});
-  return list;
-}
-
-function renderFolders(){
-  const list=buildFolderListRemote();
-  document.getElementById('folder-grid').innerHTML=list.map((f,i)=>`<div class="folder-card${i===selFolder?' sel':''}" onclick="selFolder=${i};renderFolders();renderClips();"><div class="folder-icon"></div><div class="folder-name">${f.name}</div><div class="folder-ct">${f.clips.length} clips</div></div>`).join('');
-}
-
-function renderClips(){
-  const list=buildFolderListRemote();
-  if(selFolder>=list.length){document.getElementById('clip-list-r').innerHTML='';return;}
-  document.getElementById('clip-list-r').innerHTML=list[selFolder].clips.map((c,i)=>{const id=`${selFolder}-${i}`;const s=selClips.has(id);return `<div class="clip${s?' sel':''}" onclick="toggleClip('${id}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${c}</div><div class="clip-chk">${s?'✓':''}</div></div>`;}).join('');
-}
-
-function pickRealFolderRemote(){
-  if(!window.showDirectoryPicker){document.getElementById('rem-browser-note').innerHTML='<span style="color:#D85A30;">Not supported in this browser (use Chrome)</span>';return;}
-  window.showDirectoryPicker().then(async(handle)=>{
-    const files=[];const videoExts=['.mp4','.mov','.avi','.webm','.mkv'];
-    for await(const entry of handle.values()){if(entry.kind==='file'){const ext=entry.name.substring(entry.name.lastIndexOf('.')).toLowerCase();if(videoExts.includes(ext))files.push(entry.name);}}
-    if(files.length){
-      const folderName=handle.name;
-      if(!realFolders.find(f=>f.name===folderName)){realFolders.push({name:folderName,clips:files});}
-      saveRealFolders();
-      const list=buildFolderListRemote();
-      selFolder=list.findIndex(f=>f.name===folderName);
-      renderFolders();renderClips();
-      toast(`Added ${folderName} with ${files.length} video files`);
-    }else{toast('No video files found in folder','#D85A30');}
-  }).catch(e=>{if(e.name!=='AbortError')toast('Error accessing folder','#D85A30');});
-}
-
+// ============ REMOTION TAB ============
+let selFolder=0,selClips=new Set(),hookVars=[],selVtype=0;const vtypes=['Cinematic inspirational','High jump coaching','XXO brand content','Faith and mindset'];const vtypeKeys=['cinematic','coaching','brand','faith'];
+function renderFolders(){document.getElementById('folder-grid').innerHTML=folders.map((f,i)=>`<div class="folder-card${i===selFolder?' sel':''}" onclick="selFolder=${i};renderFolders();renderClips();"><div class="folder-icon"></div><div class="folder-name">${f.name}</div><div class="folder-ct">${f.clips.length} clips</div></div>`).join('');}
+function renderClips(){document.getElementById('clip-list-r').innerHTML=folders[selFolder].clips.map((c,i)=>{const id=`${selFolder}-${i}`;const s=selClips.has(id);return `<div class="clip${s?' sel':''}" onclick="toggleClip('${id}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${c}</div><div class="clip-chk">${s?'✓':''}</div></div>`;}).join('');}
 function toggleClip(id){if(selClips.has(id))selClips.delete(id);else selClips.add(id);renderClips();buildPrompt();}
 function renderVtypes(){document.getElementById('vtype-r').innerHTML=vtypes.map((v,i)=>`<label style="font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="vt" value="${i}" ${i===0?'checked':''} onchange="selVtype=${i};buildPrompt();"> ${v}</label>`).join('');}
 const promptTpls={cinematic:(clips,hook)=>`Edit a cinematic inspirational video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with slow cinematic shot'}"\n\nStyle: Cool, desaturated, underexposed. Film grain 25. Slow motion. Avg clip 3-6 sec.\nColor: Pull exposure down, reduce saturation 20%, lift contrast.\nAudio: Ambient instrumental no lyrics. Voiceover slow.\nEnd: Single closing line then fade to black.`,coaching:(clips,hook)=>`Edit a high jump coaching video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with a bold direct statement'}"\n\nStyle: Clear, educational. Slow motion on technique. Numbered text overlays.\nPacing: 2-4 sec avg. Audio: Low energy background, clear voiceover.\nStructure: Hook → tips → takeaway. Under 60 seconds.`,brand:(clips,hook)=>`Edit an XXO Athletics brand video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with product detail close up'}"\n\nStyle: Dark, cinematic, premium. Deep blacks, muted tones. Film grain.\nAudio: Minimal ambient sound.\nEnd: XXO Athletics + April 11th.`,faith:(clips,hook)=>`Edit a faith and mindset video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with a question that creates tension'}"\n\nStyle: Personal, cinematic. Natural light, film grain, cool muted tones.\nPacing: Very slow. Deliberate pauses. Silence intentional.\nStructure: Tension → experience → faith shift → message → single closing line.`};
-function getClipNames(){return Array.from(selClips).map(id=>{const[fi,ci]=id.split('-').map(Number);const list=buildFolderListRemote();return list[fi].clips[ci];});}
+function getClipNames(){return Array.from(selClips).map(id=>{const[fi,ci]=id.split('-').map(Number);return folders[fi].clips[ci];});}
 function buildPrompt(){const clips=getClipNames();const hook=document.getElementById('main-hook').value.trim();const key=vtypeKeys[selVtype];document.getElementById('remotion-prompt').textContent=clips.length?promptTpls[key](clips,hook):'Select clips and a video type to generate your prompt.';buildHookTestPrompts();}
 function addHookVar(){hookVars.push('');renderHookVars();}
 function removeHookVar(i){hookVars.splice(i,1);renderHookVars();buildHookTestPrompts();}
 function renderHookVars(){const c=document.getElementById('hook-vars');c.innerHTML=hookVars.length?hookVars.map((h,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--surface);margin-bottom:5px;"><div style="font-size:10px;font-weight:500;color:var(--text2);min-width:18px;">V${i+1}</div><input type="text" value="${h.replace(/"/g,'&quot;')}" placeholder="Hook variation ${i+1}..." style="flex:1;border:none;background:transparent;outline:none;font-size:11px;" oninput="hookVars[${i}]=this.value;buildHookTestPrompts();"><button style="font-size:10px;color:var(--text2);cursor:pointer;padding:2px 6px;border:0.5px solid var(--border);border-radius:3px;background:transparent;" onclick="removeHookVar(${i})">remove</button></div>`).join(''):'<p class="empty" style="margin-bottom:8px;">No variations yet.</p>';}
 function buildHookTestPrompts(){const c=document.getElementById('hook-test-prompts');const clips=getClipNames();const key=vtypeKeys[selVtype];const filled=hookVars.filter(h=>h.trim());if(!filled.length||!clips.length){c.innerHTML='';return;}c.innerHTML=`<div class="divider"></div><div class="sh" style="margin-bottom:8px;">Hook test prompts</div>`+filled.map((h,i)=>{const id=`hkp-${i}`;return `<div style="margin-bottom:12px;"><div style="font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Version ${i+1}</div><div class="prompt-box" id="${id}" style="font-size:10px;">Keep the full video IDENTICAL. Swap ONLY the first 3-5 seconds.\n\nHook V${i+1}: "${h}"\n\n${promptTpls[key](clips,h)}</div><button class="btn-outline" style="font-size:10px;padding:5px 10px;" onclick="copyEl('${id}',this)">Copy V${i+1}</button></div>`;}).join('');}
 
+// ============ UTILITIES ============
 function copyEl(id,btn){const text=document.getElementById(id).textContent;navigator.clipboard.writeText(text).then(()=>{if(btn){const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1800);}});}
 function switchTab(tab,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');btn.classList.add('active');}
 
-const drop=new Date('2026-04-11');const now=new Date();
-document.getElementById('days-out').textContent=Math.max(0,Math.ceil((drop-now)/(1000*60*60*24)));
-buildCal();renderSchedule();renderIdeas();renderFolders();renderClips();renderVtypes();renderHookInputs();renderHtClips();renderTrialResults();
+// ============ INIT ============
+window.addEventListener('DOMContentLoaded',()=>{
+  loadStorage();
+  const drop=new Date('2026-04-11');const now=new Date();
+  document.getElementById('days-out').textContent=Math.max(0,Math.ceil((drop-now)/(1000*60*60*24)));
+  buildCal();renderSchedule();renderIdeas();renderFolders();renderClips();renderVtypes();renderHookInputs();renderHtClips();renderTrialResults();
+});
 </script>
 </body>
 </html>
