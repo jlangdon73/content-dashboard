@@ -85,6 +85,7 @@ textarea{resize:vertical;}
 .folder-icon::before{content:'';position:absolute;top:-4px;left:0;width:10px;height:4px;background:var(--surface2);border-radius:2px 2px 0 0;}
 .folder-name{font-size:11px;font-weight:500;}
 .folder-ct{font-size:10px;color:var(--text2);}
+.folder-live{font-size:9px;color:var(--green-text);font-weight:500;}
 .clip-list{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
 .clip{display:flex;align-items:center;gap:8px;padding:7px 10px;border:0.5px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--surface);}
 .clip:hover{border-color:var(--border2);}
@@ -103,6 +104,7 @@ textarea{resize:vertical;}
 .winner-badge{display:inline-block;background:#F0997B;color:#712B13;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;margin-left:6px;}
 .suggest-btn{padding:6px 12px;background:var(--purple-bg);color:var(--purple-text);border:none;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;cursor:pointer;border-radius:var(--radius);}
 .suggest-btn:hover{opacity:0.8;}
+.browser-note{font-size:9px;color:var(--text3);padding:8px 0;font-style:italic;}
 @media(max-width:700px){.two-col{grid-template-columns:1fr;}.stat-row{grid-template-columns:repeat(2,1fr);}.folder-grid{grid-template-columns:repeat(2,1fr);}.topbar{flex-direction:column;align-items:flex-start;padding:0 1rem;}.nav{overflow-x:auto;width:100%;}.panel{padding:1rem;}}
 </style>
 </head>
@@ -160,7 +162,7 @@ textarea{resize:vertical;}
       <div class="form-full"><label class="lbl">Caption</label><textarea id="sch-caption" rows="3" placeholder="Caption..."></textarea></div>
       <div class="form-full"><label class="lbl">Notes</label><input type="text" id="sch-notes" placeholder="e.g. Use clip 3 from photoshoot folder"></div>
       <div class="btn-row">
-        <button class="btn-dark" onclick="addPost()">Add to schedule</button>
+        <button class="btn-dark" id="sch-submit-btn" onclick="addPost()">Add to schedule</button>
         <button class="btn-outline" onclick="clearForm()">Clear</button>
       </div>
     </div>
@@ -188,6 +190,8 @@ textarea{resize:vertical;}
             <option value="2">Brand / XXO</option><option value="3">Lifestyle</option>
           </select>
         </div>
+        <button class="btn-outline" onclick="pickRealFolderHT()" style="width:100%;margin-bottom:8px;"><span style="margin-right:6px;">📁</span>Add folder from computer</button>
+        <div id="ht-browser-note" class="browser-note"></div>
         <div class="clip-list" id="ht-clip-list"></div>
         <div id="ht-selected-label" style="font-size:11px;color:var(--text2);">No video selected</div>
       </div>
@@ -246,6 +250,10 @@ textarea{resize:vertical;}
 
 <!-- IDEAS -->
 <div id="tab-ideas" class="panel">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+    <div></div>
+    <button class="suggest-btn" onclick="suggestWeek()" style="background:var(--green-bg);color:var(--green-text);padding:8px 16px;font-size:11px;">Suggest week</button>
+  </div>
   <p class="sub">Click any idea to load the hook straight into the scheduler.</p>
   <div class="sh">High jump coaching — top TikTok format</div>
   <div id="coaching-ideas"></div>
@@ -255,6 +263,8 @@ textarea{resize:vertical;}
   <div id="cinematic-ideas"></div>
   <div class="sh" style="margin-top:1.25rem;">XXO Athletics brand</div>
   <div id="brand-ideas"></div>
+  <div class="sh" style="margin-top:1.25rem;">XXO Iron Collection launch</div>
+  <div id="xxo-ideas"></div>
 </div>
 
 <!-- REMOTION -->
@@ -263,6 +273,8 @@ textarea{resize:vertical;}
   <div class="two-col" style="align-items:start;">
     <div>
       <div class="sh" style="margin-bottom:8px;">1. Select folder</div>
+      <button class="btn-outline" onclick="pickRealFolderRemote()" style="width:100%;margin-bottom:8px;"><span style="margin-right:6px;">📁</span>Add folder from computer</button>
+      <div id="rem-browser-note" class="browser-note"></div>
       <div class="folder-grid" id="folder-grid"></div>
       <div class="sh" style="margin-bottom:6px;">2. Select clips</div>
       <div class="clip-list" id="clip-list-r"></div>
@@ -294,8 +306,12 @@ const calPlan={1:{type:'coaching',hook:'If you high jump, stop scrolling.',platf
 
 let posts=JSON.parse(localStorage.getItem('jl-posts')||'[]');
 let trialResults=JSON.parse(localStorage.getItem('jl-trials')||'[]');
+let realFolders=JSON.parse(localStorage.getItem('jl-real-folders')||'[]');
+let editingPostId=null;
+
 function savePosts(){localStorage.setItem('jl-posts',JSON.stringify(posts));updateStats();}
 function saveTrials(){localStorage.setItem('jl-trials',JSON.stringify(trialResults));}
+function saveRealFolders(){localStorage.setItem('jl-real-folders',JSON.stringify(realFolders));}
 
 function toast(msg,col){const t=document.getElementById('toast');t.textContent=msg;t.style.background=col||'var(--green)';t.style.display='block';setTimeout(()=>t.style.display='none',2000);}
 function updateStats(){document.getElementById('sched-count').textContent=posts.filter(p=>p.status==='scheduled').length;document.getElementById('posted-count').textContent=posts.filter(p=>p.status==='posted').length;}
@@ -337,18 +353,40 @@ function addPost(ov){
   const caption=ov?.caption||document.getElementById('sch-caption').value.trim();
   const notes=ov?.notes||document.getElementById('sch-notes').value.trim();
   if(!date||!hook){toast('Add a date and hook first','#D85A30');return false;}
-  posts.push({id:Date.now()+Math.random(),date,time,platform,type,hook,caption,notes,status:'scheduled',isTrial:ov?.isTrial||false,groupId:ov?.groupId||null});
+  if(editingPostId){
+    const p=posts.find(x=>x.id===editingPostId);
+    if(p){p.date=date;p.time=time;p.platform=platform;p.type=type;p.hook=hook;p.caption=caption;p.notes=notes;}
+    editingPostId=null;
+    document.getElementById('sch-submit-btn').textContent='Add to schedule';
+  }else{
+    posts.push({id:Date.now()+Math.random(),date,time,platform,type,hook,caption,notes,status:'scheduled',isTrial:ov?.isTrial||false,groupId:ov?.groupId||null});
+  }
   savePosts();renderSchedule();buildCal();return true;
 }
 
-function clearForm(){document.getElementById('sch-hook').value='';document.getElementById('sch-caption').value='';document.getElementById('sch-notes').value='';}
+function clearForm(){document.getElementById('sch-hook').value='';document.getElementById('sch-caption').value='';document.getElementById('sch-notes').value='';editingPostId=null;document.getElementById('sch-submit-btn').textContent='Add to schedule';}
 function markPosted(id){const p=posts.find(x=>x.id===id);if(p){p.status='posted';savePosts();renderSchedule();toast('Marked as posted');}}
 function deletePost(id){posts=posts.filter(x=>x.id!==id);savePosts();renderSchedule();buildCal();toast('Removed');}
+
+function editPost(id){
+  const p=posts.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('sch-date').value=p.date;
+  document.getElementById('sch-time').value=p.time;
+  document.getElementById('sch-platform').value=p.platform;
+  document.getElementById('sch-type').value=p.type;
+  document.getElementById('sch-hook').value=p.hook;
+  document.getElementById('sch-caption').value=p.caption;
+  document.getElementById('sch-notes').value=p.notes;
+  editingPostId=id;
+  document.getElementById('sch-submit-btn').textContent='Save changes';
+  switchTab('schedule',document.querySelectorAll('.nav-btn')[1]);
+}
 
 function renderSchedule(){
   const upcoming=posts.filter(p=>p.status==='scheduled').sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
   const posted=posts.filter(p=>p.status==='posted').sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('upcoming-list').innerHTML=upcoming.length?upcoming.map(p=>`<div class="sched-item${p.isTrial?' trial-item':''}"><div class="sched-dot ${p.isTrial?'dot-trial':'dot-scheduled'}"></div><div class="sched-info"><div class="sched-hook">${p.hook}</div><div class="sched-meta">${p.date} · ${p.time} · ${p.platform}${p.isTrial?' · Trial Reel':''}</div>${p.notes?`<div class="sched-meta">Note: ${p.notes}</div>`:''}</div><div class="sched-actions"><button class="btn-green" onclick="markPosted(${p.id})" style="font-size:10px;padding:4px 8px;">Posted</button><button class="btn-xs-outline" onclick="deletePost(${p.id})">Remove</button></div></div>`).join(''):'<div class="empty">No upcoming posts.</div>';
+  document.getElementById('upcoming-list').innerHTML=upcoming.length?upcoming.map(p=>`<div class="sched-item${p.isTrial?' trial-item':''}"><div class="sched-dot ${p.isTrial?'dot-trial':'dot-scheduled'}"></div><div class="sched-info"><div class="sched-hook">${p.hook}</div><div class="sched-meta">${p.date} · ${p.time} · ${p.platform}${p.isTrial?' · Trial Reel':''}</div>${p.notes?`<div class="sched-meta">Note: ${p.notes}</div>`:''}</div><div class="sched-actions"><button class="btn-xs-outline" onclick="editPost(${p.id})">Edit</button><button class="btn-green" onclick="markPosted(${p.id})" style="font-size:10px;padding:4px 8px;">Posted</button><button class="btn-xs-outline" onclick="deletePost(${p.id})">Remove</button></div></div>`).join(''):'<div class="empty">No upcoming posts.</div>';
   document.getElementById('posted-list').innerHTML=posted.length?posted.map(p=>`<div class="sched-item posted${p.isTrial?' trial-item':''}"><div class="sched-dot dot-posted"></div><div class="sched-info"><div class="sched-hook">${p.hook}</div><div class="sched-meta">${p.date} · ${p.platform}${p.isTrial?' · Trial Reel':''}</div></div><div class="sched-actions"><button class="btn-xs-outline" onclick="deletePost(${p.id})">Remove</button></div></div>`).join(''):'<div class="empty">No posts marked as posted yet.</div>';
   updateStats();
 }
@@ -360,18 +398,45 @@ let hookVals=['','','','',''];
 
 const hookSuggestions={coaching:['If you high jump, stop scrolling. This is for you.','Your approach is fine. Your takeoff is killing you.','Nobody teaches this part. It is why most people hit the bar.','The 5 mistakes high jumpers make that cost them inches.','The one thing Barshim does that nobody talks about.'],faith:['You are chasing something that will not satisfy you.','Comparison is the thief of joy. And most athletes are getting robbed.','The hardest thing I have done as an athlete is trust when I could not see.','Holding onto that is costing you more than you think.','What happens when you get everything and it is still not enough.'],brand:['30 hoodies. One drop. No restock. April 11th.','Nobody needs another clothing brand. So we built something different.','Built for the athlete who shows up when nobody is watching.','The X is the setback. The O is what waits on the other side.','Most brands make clothes. We make a statement.'],cinematic:['Formed in hard places.','The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.','This is what the process actually looks like.'],lifestyle:['This is what building from nothing looks like.','You become the standard of the people around you.','Protect your energy like you protect your training.','The most important decision has nothing to do with training.','Who you spend time with is who you become.']};
 
+function buildFolderList(){
+  const list=[...folders];
+  realFolders.forEach(rf=>{if(!list.find(f=>f.name===rf.name)){list.push({name:rf.name+' (live)',clips:rf.clips||[]});}});
+  return list;
+}
+
 function renderHtClips(){
   const fi=parseInt(document.getElementById('ht-folder').value);
+  const list=buildFolderList();
   const c=document.getElementById('ht-clip-list');
   htClip=null;document.getElementById('ht-selected-label').textContent='No video selected';
-  c.innerHTML=folders[fi].clips.map((clip,i)=>`<div class="clip" id="htc-${i}" onclick="selectHtClip(${fi},${i},'${clip}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${clip}</div><div class="clip-chk"></div></div>`).join('');
+  if(fi>=list.length){c.innerHTML='';return;}
+  c.innerHTML=list[fi].clips.map((clip,i)=>`<div class="clip" id="htc-${i}" onclick="selectHtClip(${fi},${i},'${clip}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${clip}</div><div class="clip-chk"></div></div>`).join('');
 }
 
 function selectHtClip(fi,ci,name){
   document.querySelectorAll('#ht-clip-list .clip').forEach(c=>{c.classList.remove('sel','clip-single');c.querySelector('.clip-chk').textContent='';});
   const el=document.getElementById(`htc-${ci}`);el.classList.add('sel','clip-single');el.querySelector('.clip-chk').textContent='✓';
-  htClip={folder:folders[fi].name,clip:name};document.getElementById('ht-selected-label').textContent=`Selected: ${name} (${folders[fi].name})`;
+  const list=buildFolderList();
+  htClip={folder:list[fi].name,clip:name};document.getElementById('ht-selected-label').textContent=`Selected: ${name} (${list[fi].name})`;
   updateSchedulePreview();
+}
+
+function pickRealFolderHT(){
+  if(!window.showDirectoryPicker){document.getElementById('ht-browser-note').innerHTML='<span style="color:#D85A30;">Not supported in this browser (use Chrome)</span>';return;}
+  window.showDirectoryPicker().then(async(handle)=>{
+    const files=[];const videoExts=['.mp4','.mov','.avi','.webm','.mkv'];
+    for await(const entry of handle.values()){if(entry.kind==='file'){const ext=entry.name.substring(entry.name.lastIndexOf('.')).toLowerCase();if(videoExts.includes(ext))files.push(entry.name);}}
+    if(files.length){
+      const folderName=handle.name;
+      realFolders.push({name:folderName,clips:files});
+      saveRealFolders();
+      const sel=document.getElementById('ht-folder');
+      const opt=document.createElement('option');opt.value=folders.length+realFolders.length-1;opt.textContent=folderName+' (live)';sel.appendChild(opt);
+      sel.value=folders.length+realFolders.length-1;
+      renderHtClips();
+      toast(`Added ${folderName} with ${files.length} video files`);
+    }else{toast('No video files found in folder','#D85A30');}
+  }).catch(e=>{if(e.name!=='AbortError')toast('Error accessing folder','#D85A30');});
 }
 
 function renderHookInputs(){
@@ -432,20 +497,66 @@ function rateTrial(ri,hi,rating){trialResults[ri].ratings[hi]=rating;saveTrials(
 function setWinner(ri,hi){trialResults[ri].winner=hi;saveTrials();renderTrialResults();toast(`V${hi+1} marked as winner`);}
 
 // IDEAS
-const ideas={coaching:[{hook:'If you high jump, stop scrolling. This is for you.',alts:['Every high jumper needs to hear this.','High jumpers — I made this specifically for you.','This is the video I wish someone made when I started.'],platform:'TikTok primary'},{hook:'Your approach is fine. Your takeoff is killing you.',alts:['You have a great approach and still cannot jump high. Here is why.','Stop thinking about going up. Think about this instead.'],platform:'TikTok + Instagram'},{hook:'The 5 mistakes high jumpers make that cost them inches.',alts:['5 things to fix before your next competition.','If you do these 5 things your jump improves in one week.'],platform:'TikTok primary'},{hook:'Nobody teaches this part. It is why most people hit the bar.',alts:['Your coach probably never showed you this.','Everyone focuses on the approach. This actually clears the bar.'],platform:'TikTok + Instagram'}],faith:[{hook:'You are chasing something that will not satisfy you. And you already know it.',alts:['What happens when you get everything you wanted and it is still not enough.','The moment I stopped chasing athletics and started chasing something real.'],platform:'Instagram primary'},{hook:'Comparison is the thief of joy. And most athletes are getting robbed.',alts:['You are comparing your behind the scenes to everyone else\'s highlight reel.','Your chapter one is supposed to look like a chapter one.'],platform:'Instagram primary'},{hook:'The hardest thing I have ever done is trust when I could not see the result.',alts:['I had no control and that was the point.','God did not remove the hard season. He changed what I thought it was for.'],platform:'Instagram primary'},{hook:'Holding onto that is costing you more than you think.',alts:['The most athletic thing you can do has nothing to do with your body.','This one decision changed how I compete, train, and live.'],platform:'Instagram primary'}],cinematic:[{hook:'Formed in hard places.',alts:['The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.'],platform:'Instagram primary'},{hook:'You become the standard of the people around you. Choose carefully.',alts:['Protect your energy like you protect your training.','Who you spend time with is who you become.'],platform:'Instagram'}],brand:[{hook:'30 hoodies. One drop. No restock. April 11th.',alts:['Built for the athlete who shows up when nobody is watching.','Most brands make clothes. We make a statement.'],platform:'Both accounts'},{hook:'Nobody needs another clothing brand. So we built something different.',alts:['This is not a brand built around a celebrity. It is built around a standard.','Why would a D1 athlete start a clothing brand. Let me show you.'],platform:'Personal account'}]};
+const ideas={coaching:[{hook:'If you high jump, stop scrolling. This is for you.',alts:['Every high jumper needs to hear this.','High jumpers — I made this specifically for you.','This is the video I wish someone made when I started.'],platform:'TikTok primary'},{hook:'Your approach is fine. Your takeoff is killing you.',alts:['You have a great approach and still cannot jump high. Here is why.','Stop thinking about going up. Think about this instead.'],platform:'TikTok + Instagram'},{hook:'The 5 mistakes high jumpers make that cost them inches.',alts:['5 things to fix before your next competition.','If you do these 5 things your jump improves in one week.'],platform:'TikTok primary'},{hook:'Nobody teaches this part. It is why most people hit the bar.',alts:['Your coach probably never showed you this.','Everyone focuses on the approach. This actually clears the bar.'],platform:'TikTok + Instagram'}],faith:[{hook:'You are chasing something that will not satisfy you. And you already know it.',alts:['What happens when you get everything you wanted and it is still not enough.','The moment I stopped chasing athletics and started chasing something real.'],platform:'Instagram primary'},{hook:'Comparison is the thief of joy. And most athletes are getting robbed.',alts:['You are comparing your behind the scenes to everyone else\'s highlight reel.','Your chapter one is supposed to look like a chapter one.'],platform:'Instagram primary'},{hook:'The hardest thing I have ever done is trust when I could not see the result.',alts:['I had no control and that was the point.','God did not remove the hard season. He changed what I thought it was for.'],platform:'Instagram primary'},{hook:'Holding onto that is costing you more than you think.',alts:['The most athletic thing you can do has nothing to do with your body.','This one decision changed how I compete, train, and live.'],platform:'Instagram primary'}],cinematic:[{hook:'Formed in hard places.',alts:['The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.'],platform:'Instagram primary'},{hook:'You become the standard of the people around you. Choose carefully.',alts:['Protect your energy like you protect your training.','Who you spend time with is who you become.'],platform:'Instagram'}],brand:[{hook:'30 hoodies. One drop. No restock. April 11th.',alts:['Built for the athlete who shows up when nobody is watching.','Most brands make clothes. We make a statement.'],platform:'Both accounts'},{hook:'Nobody needs another clothing brand. So we built something different.',alts:['This is not a brand built around a celebrity. It is built around a standard.','Why would a D1 athlete start a clothing brand. Let me show you.'],platform:'Personal account'}],xxo:[{hook:'Started from $0. Now we drop April 11th.',alts:['From nothing to ready.','The journey from zero.'],platform:'Personal account'},{hook:'The X is the setback. The O is what you build after.',alts:['Every failure is part of the story.','Forged by the hard moments.'],platform:'Both accounts'},{hook:'This is what starting from nothing actually looks like.',alts:['Raw footage of the early days.','No filter. No BS. Just the work.'],platform:'TikTok'},{hook:'30 hoodies. Built by failure. Available April 11th.',alts:['Made for people who show up.','Iron Collection — forged in struggle.'],platform:'Both accounts'},{hook:'Why I spent my last money on hoodies instead of more ads.',alts:['The bet I made.','Betting on the mission over the metrics.'],platform:'Personal account'},{hook:'5 days until drop. Here is what you need to know.',alts:['Iron Collection countdown.','Almost here.'],platform:'Both accounts'},{hook:'We made it to launch day. Thank you for being early.',alts:['Drop day. We are live.','It happened. XXO Iron Collection is here.'],platform:'Both accounts'},{hook:'Thank you for believing before we shipped a single hoodie.',alts:['This is just the beginning.','To everyone who said yes first.'],platform:'Personal account'}]};
 
-function renderIdeas(){Object.entries(ideas).forEach(([type,list])=>{const c=document.getElementById(type+'-ideas');if(!c)return;c.innerHTML='';list.forEach(item=>{const d=document.createElement('div');d.className='idea-card';d.innerHTML=`<div class="idea-top"><span class="cpill ${typeColors[type]}">${type}</span></div><div class="idea-hook">"${item.hook}"</div><div class="idea-alts">Alts: ${item.alts.map(a=>`"${a}"`).join(' · ')}</div><div class="idea-plat">${item.platform}</div>`;d.onclick=()=>{document.getElementById('sch-hook').value=item.hook;document.getElementById('sch-type').value=type;switchTab('schedule',document.querySelectorAll('.nav-btn')[1]);toast('Hook loaded to scheduler');};c.appendChild(d);});});}
+function renderIdeas(){Object.entries(ideas).forEach(([type,list])=>{const c=document.getElementById(type+'-ideas');if(!c)return;c.innerHTML='';list.forEach(item=>{const d=document.createElement('div');d.className='idea-card';d.innerHTML=`<div class="idea-top"><span class="cpill ${typeColors[type]||'p-brand'}">${type}</span></div><div class="idea-hook">"${item.hook}"</div><div class="idea-alts">Alts: ${item.alts.map(a=>`"${a}"`).join(' · ')}</div><div class="idea-plat">${item.platform}</div>`;d.onclick=()=>{document.getElementById('sch-hook').value=item.hook;document.getElementById('sch-type').value=type;switchTab('schedule',document.querySelectorAll('.nav-btn')[1]);toast('Hook loaded to scheduler');};c.appendChild(d);});});}
+
+function suggestWeek(){
+  const mon=new Date('2026-03-30');const allIdeas=Object.values(ideas).flat();
+  const selected=[];const types=['coaching','faith','cinematic','brand','xxo'];
+  types.forEach(type=>{const pool=ideas[type]||[];if(pool.length)selected.push(pool[Math.floor(Math.random()*pool.length)]);});
+  if(selected.length<5){toast('Not enough idea types available','#D85A30');return;}
+  for(let i=0;i<5;i++){
+    const date=new Date(mon);date.setDate(date.getDate()+i);
+    const dateStr=`2026-03-${String(date.getDate()).padStart(2,'0')}`;
+    addPost({date:dateStr,time:'',platform:'Both',type:selected[i].type||selected[i].platform.split(' ')[0],hook:selected[i].hook,caption:'',notes:'From week suggestion'});
+  }
+  toast('5 ideas added to your schedule — set your times in Scheduler');
+}
 
 // REMOTION TAB
 let selFolder=0,selClips=new Set(),hookVars=[],selVtype=0;
 const vtypes=['Cinematic inspirational','High jump coaching','XXO brand content','Faith and mindset'];
 const vtypeKeys=['cinematic','coaching','brand','faith'];
-function renderFolders(){document.getElementById('folder-grid').innerHTML=folders.map((f,i)=>`<div class="folder-card${i===selFolder?' sel':''}" onclick="selFolder=${i};renderFolders();renderClips();"><div class="folder-icon"></div><div class="folder-name">${f.name}</div><div class="folder-ct">${f.clips.length} clips</div></div>`).join('');}
-function renderClips(){document.getElementById('clip-list-r').innerHTML=folders[selFolder].clips.map((c,i)=>{const id=`${selFolder}-${i}`;const s=selClips.has(id);return `<div class="clip${s?' sel':''}" onclick="toggleClip('${id}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${c}</div><div class="clip-chk">${s?'✓':''}</div></div>`;}).join('');}
+
+function buildFolderListRemote(){
+  const list=[...folders];
+  realFolders.forEach(rf=>{if(!list.find(f=>f.name===rf.name)){list.push({name:rf.name+' (live)',clips:rf.clips||[]});}});
+  return list;
+}
+
+function renderFolders(){
+  const list=buildFolderListRemote();
+  document.getElementById('folder-grid').innerHTML=list.map((f,i)=>`<div class="folder-card${i===selFolder?' sel':''}" onclick="selFolder=${i};renderFolders();renderClips();"><div class="folder-icon"></div><div class="folder-name">${f.name}</div><div class="folder-ct">${f.clips.length} clips</div></div>`).join('');
+}
+
+function renderClips(){
+  const list=buildFolderListRemote();
+  if(selFolder>=list.length){document.getElementById('clip-list-r').innerHTML='';return;}
+  document.getElementById('clip-list-r').innerHTML=list[selFolder].clips.map((c,i)=>{const id=`${selFolder}-${i}`;const s=selClips.has(id);return `<div class="clip${s?' sel':''}" onclick="toggleClip('${id}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${c}</div><div class="clip-chk">${s?'✓':''}</div></div>`;}).join('');
+}
+
+function pickRealFolderRemote(){
+  if(!window.showDirectoryPicker){document.getElementById('rem-browser-note').innerHTML='<span style="color:#D85A30;">Not supported in this browser (use Chrome)</span>';return;}
+  window.showDirectoryPicker().then(async(handle)=>{
+    const files=[];const videoExts=['.mp4','.mov','.avi','.webm','.mkv'];
+    for await(const entry of handle.values()){if(entry.kind==='file'){const ext=entry.name.substring(entry.name.lastIndexOf('.')).toLowerCase();if(videoExts.includes(ext))files.push(entry.name);}}
+    if(files.length){
+      const folderName=handle.name;
+      if(!realFolders.find(f=>f.name===folderName)){realFolders.push({name:folderName,clips:files});}
+      saveRealFolders();
+      const list=buildFolderListRemote();
+      selFolder=list.findIndex(f=>f.name===folderName);
+      renderFolders();renderClips();
+      toast(`Added ${folderName} with ${files.length} video files`);
+    }else{toast('No video files found in folder','#D85A30');}
+  }).catch(e=>{if(e.name!=='AbortError')toast('Error accessing folder','#D85A30');});
+}
+
 function toggleClip(id){if(selClips.has(id))selClips.delete(id);else selClips.add(id);renderClips();buildPrompt();}
 function renderVtypes(){document.getElementById('vtype-r').innerHTML=vtypes.map((v,i)=>`<label style="font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="vt" value="${i}" ${i===0?'checked':''} onchange="selVtype=${i};buildPrompt();"> ${v}</label>`).join('');}
 const promptTpls={cinematic:(clips,hook)=>`Edit a cinematic inspirational video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with slow cinematic shot'}"\n\nStyle: Cool, desaturated, underexposed. Film grain 25. Slow motion. Avg clip 3-6 sec.\nColor: Pull exposure down, reduce saturation 20%, lift contrast.\nAudio: Ambient instrumental no lyrics. Voiceover slow.\nEnd: Single closing line then fade to black.`,coaching:(clips,hook)=>`Edit a high jump coaching video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with a bold direct statement'}"\n\nStyle: Clear, educational. Slow motion on technique. Numbered text overlays.\nPacing: 2-4 sec avg. Audio: Low energy background, clear voiceover.\nStructure: Hook → tips → takeaway. Under 60 seconds.`,brand:(clips,hook)=>`Edit an XXO Athletics brand video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with product detail close up'}"\n\nStyle: Dark, cinematic, premium. Deep blacks, muted tones. Film grain.\nAudio: Minimal ambient sound.\nEnd: XXO Athletics + April 11th.`,faith:(clips,hook)=>`Edit a faith and mindset video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with a question that creates tension'}"\n\nStyle: Personal, cinematic. Natural light, film grain, cool muted tones.\nPacing: Very slow. Deliberate pauses. Silence intentional.\nStructure: Tension → experience → faith shift → message → single closing line.`};
-function getClipNames(){return Array.from(selClips).map(id=>{const[fi,ci]=id.split('-').map(Number);return folders[fi].clips[ci];});}
+function getClipNames(){return Array.from(selClips).map(id=>{const[fi,ci]=id.split('-').map(Number);const list=buildFolderListRemote();return list[fi].clips[ci];});}
 function buildPrompt(){const clips=getClipNames();const hook=document.getElementById('main-hook').value.trim();const key=vtypeKeys[selVtype];document.getElementById('remotion-prompt').textContent=clips.length?promptTpls[key](clips,hook):'Select clips and a video type to generate your prompt.';buildHookTestPrompts();}
 function addHookVar(){hookVars.push('');renderHookVars();}
 function removeHookVar(i){hookVars.splice(i,1);renderHookVars();buildHookTestPrompts();}
