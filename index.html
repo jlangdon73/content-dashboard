@@ -207,6 +207,34 @@ textarea{resize:vertical;}
 .rec-tag{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--text2);margin-bottom:4px;}
 .rec-text{font-size:12px;line-height:1.65;}
 .sync-empty{text-align:center;padding:3rem 1rem;color:var(--text2);}
+.time-filter-row{display:flex;align-items:center;gap:6px;margin-bottom:14px;}
+.time-pill{padding:4px 11px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface);font-size:10px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;}
+.time-pill.active{background:var(--text);color:var(--bg);border-color:var(--text);}
+.post-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background .12s;border-radius:6px;}
+.post-row:hover{background:var(--surface2);padding-left:6px;padding-right:6px;margin:0 -6px;}
+.post-row:last-child{border-bottom:none;}
+.log-btn{margin-left:auto;padding:3px 9px;border-radius:6px;border:0.5px solid var(--border);background:transparent;font-size:9px;font-weight:600;color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.log-btn:hover{background:var(--text);color:var(--bg);}
+.log-btn.has-data{border-color:var(--green-text);color:var(--green-text);}
+/* Stats Modal */
+.stats-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;}
+.stats-modal{background:var(--card);border:0.5px solid var(--border);border-radius:14px;width:440px;max-width:95vw;max-height:85vh;overflow-y:auto;padding:24px;}
+.stats-modal-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;}
+.stats-modal-thumb{width:56px;height:56px;border-radius:8px;background:var(--surface2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.stats-modal-thumb img{width:100%;height:100%;object-fit:cover;}
+.stats-modal-caption{font-size:11px;color:var(--text2);line-height:1.5;flex:1;}
+.stats-modal-date{font-size:10px;color:var(--text3);margin-top:2px;}
+.stats-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stats-input-group{display:flex;flex-direction:column;gap:5px;}
+.stats-input-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);}
+.stats-input{padding:8px 10px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;}
+.stats-input:focus{outline:none;border-color:var(--text2);}
+.stats-history{margin-top:16px;border-top:0.5px solid var(--border);padding-top:14px;}
+.stats-history-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px;}
+.stats-history-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:11px;}
+.stats-history-row:last-child{border-bottom:none;}
+.stats-history-date{color:var(--text3);min-width:70px;font-size:10px;}
+.stats-history-chip{padding:2px 7px;border-radius:10px;background:var(--surface2);font-size:10px;font-weight:500;}
 .sync-empty-icon{font-size:32px;margin-bottom:12px;}
 .sync-empty-text{font-size:13px;font-weight:500;margin-bottom:6px;}
 .sync-empty-sub{font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:16px;}
@@ -429,20 +457,30 @@ textarea{resize:vertical;}
   <div class="analytics-grid">
     <!-- LEFT: posts table -->
     <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div class="sh" style="margin:0;">Posts Performance</div>
         <div style="display:flex;gap:5px;" id="posts-sort-pills">
           <button class="filter-pill active" onclick="sortPosts('date',this)">Recent</button>
           <button class="filter-pill" onclick="sortPosts('plays',this)">Top Plays</button>
           <button class="filter-pill" onclick="sortPosts('saves',this)">Top Saves</button>
-          <button class="filter-pill" onclick="sortPosts('reach',this)">Top Reach</button>
+          <button class="filter-pill" onclick="sortPosts('likes',this)">Top Likes</button>
         </div>
+      </div>
+      <!-- Time filter -->
+      <div class="time-filter-row">
+        <span style="font-size:10px;color:var(--text3);font-weight:500;">Range:</span>
+        <button class="time-pill" onclick="setTimeFilter('7d',this)">7 days</button>
+        <button class="time-pill active" onclick="setTimeFilter('30d',this)">30 days</button>
+        <button class="time-pill" onclick="setTimeFilter('60d',this)">60 days</button>
+        <button class="time-pill" onclick="setTimeFilter('90d',this)">90 days</button>
+        <button class="time-pill" onclick="setTimeFilter('all',this)">All time</button>
+        <span style="font-size:10px;color:var(--text3);margin-left:auto;" id="posts-count-label"></span>
       </div>
       <div id="posts-table">
         <div class="sync-empty">
           <div class="sync-empty-icon">📊</div>
           <div class="sync-empty-text">No data yet</div>
-          <div class="sync-empty-sub">Hit "Sync Analytics" to pull your Instagram posts, plays, reach, saves, and more. Data is read-only — nothing is posted.</div>
+          <div class="sync-empty-sub">Hit "Sync Analytics" to pull your Instagram posts, then manually log plays, reach, and saves — just like the Edits app.</div>
           <button class="btn-dark" onclick="syncAnalytics()">Sync Analytics</button>
         </div>
       </div>
@@ -947,12 +985,16 @@ function rateTrial(ri,hi,rating){trialResults[ri].ratings[hi]=rating;saveTrials(
 function setWinner(ri,hi){trialResults[ri].winner=hi;saveTrials();renderTrialResults();toast(`V${hi+1} marked as winner`);}
 
 // ============ ANALYTICS TAB ============
-let analyticsData=null,postsSortKey='date';
+let analyticsData=null,postsSortKey='date',analyticsTimeFilter='30d',manualStats={},statsModalPostId=null;
 
 function loadAnalyticsStorage(){
-  try{analyticsData=JSON.parse(localStorage.getItem('jl-analytics')||'null');}catch(e){analyticsData=null;}
+  try{
+    analyticsData=JSON.parse(localStorage.getItem('jl-analytics')||'null');
+    manualStats=JSON.parse(localStorage.getItem('jl-manual-stats')||'{}');
+  }catch(e){analyticsData=null;manualStats={};}
 }
 function saveAnalyticsData(){localStorage.setItem('jl-analytics',JSON.stringify(analyticsData));localStorage.setItem('jl-analytics-ts',Date.now().toString());}
+function saveManualStatsStore(){localStorage.setItem('jl-manual-stats',JSON.stringify(manualStats));}
 
 async function syncAnalytics(){
   const btn=document.getElementById('sync-btn');
@@ -969,64 +1011,177 @@ async function syncAnalytics(){
   }finally{btn.textContent='Sync Analytics';btn.disabled=false;}
 }
 
+// ---- Time filter ----
+function setTimeFilter(f,btn){
+  analyticsTimeFilter=f;
+  document.querySelectorAll('.time-pill').forEach(p=>p.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(analyticsData)renderPostsTable(getFilteredMedia());
+}
+
+function getFilteredMedia(){
+  const all=analyticsData?.media||[];
+  if(analyticsTimeFilter==='all')return all;
+  const days=parseInt(analyticsTimeFilter);
+  const cutoff=Date.now()-days*86400000;
+  return all.filter(m=>new Date(m.timestamp).getTime()>=cutoff);
+}
+
+// ---- Manual stats modal ----
+function openStatsModal(postId){
+  const media=analyticsData?.media||[];
+  const post=media.find(m=>m.id===postId);
+  if(!post)return;
+  statsModalPostId=postId;
+  // Thumbnail
+  const thumbEl=document.getElementById('sml-thumb');
+  const imgSrc=post.thumbnail_url||post.media_url;
+  thumbEl.innerHTML=imgSrc?`<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;">`:'▶';
+  // Caption & date
+  document.getElementById('sml-caption').textContent=(post.caption||'No caption').substring(0,120);
+  document.getElementById('sml-date').textContent=new Date(post.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const linkEl=document.getElementById('sml-link');
+  if(post.permalink){linkEl.href=post.permalink;}else{linkEl.style.display='none';}
+  // Pre-fill with latest manual stats or API data
+  const logs=manualStats[postId]||[];
+  const latest=logs.length?logs[logs.length-1]:null;
+  const ins=post.insights||{};
+  document.getElementById('sml-plays').value=latest?.plays||ins.plays||'';
+  document.getElementById('sml-reach').value=latest?.reach||ins.reach||'';
+  document.getElementById('sml-saves').value=latest?.saves||ins.saved||'';
+  document.getElementById('sml-shares').value=latest?.shares||ins.shares||'';
+  document.getElementById('sml-likes').value=latest?.likes||post.like_count||'';
+  document.getElementById('sml-comments').value=latest?.comments||post.comments_count||'';
+  // History
+  const histEl=document.getElementById('sml-history');
+  const rowsEl=document.getElementById('sml-history-rows');
+  if(logs.length>0){
+    histEl.style.display='';
+    rowsEl.innerHTML=[...logs].reverse().map(l=>{
+      const d=new Date(l.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'});
+      return `<div class="stats-history-row">
+        <span class="stats-history-date">${d}</span>
+        ${l.plays?`<span class="stats-history-chip">${fmtNum(l.plays)} plays</span>`:''}
+        ${l.reach?`<span class="stats-history-chip">${fmtNum(l.reach)} reach</span>`:''}
+        ${l.saves?`<span class="stats-history-chip">${fmtNum(l.saves)} saves</span>`:''}
+        ${l.likes?`<span class="stats-history-chip">${fmtNum(l.likes)} likes</span>`:''}
+      </div>`;
+    }).join('');
+  }else{histEl.style.display='none';}
+  document.getElementById('stats-modal-overlay').style.display='flex';
+}
+
+function closeStatsModal(e){
+  if(e&&e.target!==document.getElementById('stats-modal-overlay'))return;
+  document.getElementById('stats-modal-overlay').style.display='none';
+  statsModalPostId=null;
+}
+
+function saveManualStats(){
+  if(!statsModalPostId)return;
+  const entry={
+    ts:Date.now(),
+    plays:parseInt(document.getElementById('sml-plays').value)||0,
+    reach:parseInt(document.getElementById('sml-reach').value)||0,
+    saves:parseInt(document.getElementById('sml-saves').value)||0,
+    shares:parseInt(document.getElementById('sml-shares').value)||0,
+    likes:parseInt(document.getElementById('sml-likes').value)||0,
+    comments:parseInt(document.getElementById('sml-comments').value)||0,
+  };
+  if(!manualStats[statsModalPostId])manualStats[statsModalPostId]=[];
+  manualStats[statsModalPostId].push(entry);
+  saveManualStatsStore();
+  document.getElementById('stats-modal-overlay').style.display='none';
+  statsModalPostId=null;
+  renderAnalytics();
+  toast('Stats saved');
+}
+
+// Get best available stats for a post (manual > API)
+function getPostStats(post){
+  const logs=manualStats[post.id]||[];
+  const latest=logs.length?logs[logs.length-1]:null;
+  const ins=post.insights||{};
+  return {
+    plays:latest?.plays||ins.plays||0,
+    reach:latest?.reach||ins.reach||0,
+    saves:latest?.saves||ins.saved||0,
+    shares:latest?.shares||ins.shares||0,
+    likes:latest?.likes||post.like_count||0,
+    comments:latest?.comments||post.comments_count||0,
+    hasManual:!!latest,
+  };
+}
+
 function fmtNum(n){if(!n||isNaN(n))return'0';n=parseInt(n);if(n>=1000000)return(n/1000000).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'K';return n.toString();}
 
 function renderAnalytics(){
   if(!analyticsData)return;
   const{profile={},accountInsights={},media=[],usingBusinessAPI=false}=analyticsData;
-  // Followers: only available on Business/Creator API
+  // Stat cards
   const followersEl=document.getElementById('an-followers');
   if(profile.followers_count!=null){followersEl.textContent=fmtNum(profile.followers_count);}
-  else{followersEl.textContent='—';followersEl.title='Requires Instagram Creator/Business account';}
-  // Insights: only available on Business/Creator API
+  else{followersEl.textContent=profile.media_count?fmtNum(profile.media_count)+' posts':'—';}
   document.getElementById('an-reach').textContent=accountInsights.reach?fmtNum(accountInsights.reach):'—';
   document.getElementById('an-impressions').textContent=accountInsights.impressions?fmtNum(accountInsights.impressions):'—';
   document.getElementById('an-pviews').textContent=accountInsights.profile_views?fmtNum(accountInsights.profile_views):'—';
   const ts=localStorage.getItem('jl-analytics-ts');
-  const apiNote=usingBusinessAPI?'':'  •  Switch to Creator account for reach & plays data';
-  if(ts){const d=new Date(parseInt(ts));document.getElementById('analytics-sync-status').textContent='Last synced: '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'  •  '+media.length+' posts'+apiNote;}
-  renderPostsTable(media);renderContentInsights(media,profile,accountInsights);renderAIRecs(media,profile,accountInsights);
+  const filtered=getFilteredMedia();
+  if(ts){const d=new Date(parseInt(ts));document.getElementById('analytics-sync-status').textContent='Last synced: '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' · '+filtered.length+' posts in range';}
+  renderPostsTable(filtered);renderContentInsights(filtered,profile,accountInsights);renderAIRecs(filtered,profile,accountInsights);
 }
 
 function sortPosts(key,btn){
   postsSortKey=key;
   document.querySelectorAll('#posts-sort-pills .filter-pill').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  if(analyticsData)renderPostsTable(analyticsData.media||[]);
+  if(analyticsData)renderPostsTable(getFilteredMedia());
 }
 
 function renderPostsTable(media){
   const tbl=document.getElementById('posts-table');
-  if(!media||!media.length){tbl.innerHTML='<div class="sync-empty"><div class="sync-empty-icon">📊</div><div class="sync-empty-text">No posts found</div><div class="sync-empty-sub">Instagram returned no media for this account.</div></div>';return;}
+  const countLbl=document.getElementById('posts-count-label');
+  if(!media||!media.length){
+    tbl.innerHTML='<div class="sync-empty"><div class="sync-empty-icon">📊</div><div class="sync-empty-text">No posts in this range</div><div class="sync-empty-sub">Try a wider time range or sync to pull more posts.</div></div>';
+    if(countLbl)countLbl.textContent='';
+    return;
+  }
+  if(countLbl)countLbl.textContent=media.length+' posts';
   const sorted=[...media].sort((a,b)=>{
+    const sa=getPostStats(a),sb=getPostStats(b);
     if(postsSortKey==='date')return new Date(b.timestamp)-new Date(a.timestamp);
-    if(postsSortKey==='plays')return((b.insights?.plays||0)-(a.insights?.plays||0));
-    if(postsSortKey==='saves')return((b.insights?.saved||0)-(a.insights?.saved||0));
-    if(postsSortKey==='reach')return((b.insights?.reach||0)-(a.insights?.reach||0));
+    if(postsSortKey==='plays')return(sb.plays-sa.plays);
+    if(postsSortKey==='saves')return(sb.saves-sa.saves);
+    if(postsSortKey==='likes')return(sb.likes-sa.likes);
     return 0;
   });
   tbl.innerHTML=sorted.map(item=>{
-    const ins=item.insights||{};
-    const plays=ins.plays||0,reach=ins.reach||0,saves=ins.saved||0,shares=ins.shares||0;
-    const likes=item.like_count||0,comments=item.comments_count||0;
-    const eng=reach>0?(((likes+comments+saves+shares)/reach)*100).toFixed(1):'—';
-    const engHigh=eng!=='—'&&parseFloat(eng)>=4;
-    const cap=(item.caption||'No caption').substring(0,90);
+    const s=getPostStats(item);
+    const eng=s.reach>0?(((s.likes+s.comments+s.saves+s.shares)/s.reach)*100).toFixed(1):null;
+    const engHigh=eng&&parseFloat(eng)>=4;
+    const cap=(item.caption||'No caption').substring(0,85);
     const date=new Date(item.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const typeLabel=item.media_type==='VIDEO'?'REEL':item.media_type||'POST';
-    return `<div class="post-row">
-      <div class="post-thumb">${item.thumbnail_url?`<img src="${item.thumbnail_url}" loading="lazy">`:'▶'}</div>
+    const typeLabel=item.media_type==='VIDEO'||item.media_type==='REELS'?'REEL':item.media_type||'POST';
+    const imgSrc=item.thumbnail_url||item.media_url;
+    const hasManualBadge=s.hasManual?'<span style="font-size:9px;color:var(--green-text);font-weight:600;margin-left:4px;">✓ logged</span>':'';
+    return `<div class="post-row" onclick="openStatsModal('${item.id}')">
+      <div class="post-thumb">${imgSrc?`<img src="${imgSrc}" loading="lazy">`:'▶'}</div>
       <div class="post-info">
-        <div class="post-caption" title="${cap.replace(/"/g,'&quot;')}">"${cap}${item.caption&&item.caption.length>90?'…':''}"</div>
-        <div class="post-meta">${date} · ${typeLabel}</div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <div>
+            <div class="post-caption" title="${(item.caption||'').replace(/"/g,'&quot;')}">"${cap}${(item.caption||'').length>85?'…':''}"</div>
+            <div class="post-meta">${date} · ${typeLabel}${hasManualBadge}</div>
+          </div>
+          <button class="log-btn ${s.hasManual?'has-data':''}" onclick="event.stopPropagation();openStatsModal('${item.id}')">${s.hasManual?'Update':'Log Stats'}</button>
+        </div>
         <div class="post-metrics">
-          ${plays?`<div class="metric-chip"><div class="metric-num">${fmtNum(plays)}</div><div class="metric-lbl">plays</div></div>`:''}
-          <div class="metric-chip"><div class="metric-num">${fmtNum(reach)}</div><div class="metric-lbl">reach</div></div>
-          <div class="metric-chip"><div class="metric-num">${likes}</div><div class="metric-lbl">likes</div></div>
-          <div class="metric-chip"><div class="metric-num">${saves}</div><div class="metric-lbl">saves</div></div>
-          <div class="metric-chip"><div class="metric-num">${shares}</div><div class="metric-lbl">shares</div></div>
-          <span class="eng-badge" style="background:${engHigh?'var(--green-bg)':'var(--surface2)'};color:${engHigh?'var(--green-text)':'var(--text2)'};">${eng}% eng</span>
-          ${item.permalink?`<a href="${item.permalink}" target="_blank" style="font-size:10px;color:var(--text3);text-decoration:none;margin-left:auto;">↗</a>`:''}
+          ${s.plays?`<div class="metric-chip"><div class="metric-num">${fmtNum(s.plays)}</div><div class="metric-lbl">plays</div></div>`:''}
+          ${s.reach?`<div class="metric-chip"><div class="metric-num">${fmtNum(s.reach)}</div><div class="metric-lbl">reach</div></div>`:''}
+          <div class="metric-chip"><div class="metric-num">${fmtNum(s.likes)}</div><div class="metric-lbl">likes</div></div>
+          ${s.saves?`<div class="metric-chip"><div class="metric-num">${fmtNum(s.saves)}</div><div class="metric-lbl">saves</div></div>`:''}
+          ${s.shares?`<div class="metric-chip"><div class="metric-num">${fmtNum(s.shares)}</div><div class="metric-lbl">shares</div></div>`:''}
+          ${eng?`<span class="eng-badge" style="background:${engHigh?'var(--green-bg)':'var(--surface2)'};color:${engHigh?'var(--green-text)':'var(--text2)'};">${eng}% eng</span>`:''}
+          ${item.permalink?`<a href="${item.permalink}" target="_blank" style="font-size:10px;color:var(--text3);text-decoration:none;margin-left:auto;" onclick="event.stopPropagation();">↗</a>`:''}
         </div>
       </div>
     </div>`;
@@ -1035,46 +1190,58 @@ function renderPostsTable(media){
 
 function renderContentInsights(media,profile,accountInsights){
   const el=document.getElementById('content-insights');
-  if(!media||!media.length){el.innerHTML='<div class="empty">No data yet.</div>';return;}
-  const reels=media.filter(m=>m.media_type==='VIDEO'||m.media_type==='REELS');
-  const avgPlays=reels.length?Math.round(reels.reduce((s,m)=>s+(m.insights?.plays||0),0)/reels.length):0;
-  const avgReach=media.length?Math.round(media.reduce((s,m)=>s+(m.insights?.reach||0),0)/media.length):0;
-  const avgSaves=media.length?Math.round(media.reduce((s,m)=>s+(m.insights?.saved||0),0)/media.length):0;
-  const avgEng=media.filter(m=>(m.insights?.reach||0)>0).map(m=>{const r=m.insights.reach;return((m.like_count||0)+(m.comments_count||0)+(m.insights?.saved||0)+(m.insights?.shares||0))/r*100;});
-  const avgEngRate=avgEng.length?(avgEng.reduce((s,v)=>s+v,0)/avgEng.length).toFixed(1):'—';
+  if(!media||!media.length){el.innerHTML='<div class="empty">No data in this range.</div>';return;}
+  const withStats=media.map(m=>({...m,_s:getPostStats(m)}));
+  const reels=withStats.filter(m=>m.media_type==='VIDEO'||m.media_type==='REELS');
+  const avgPlays=reels.length?Math.round(reels.reduce((s,m)=>s+m._s.plays,0)/reels.length):0;
+  const avgReach=media.length?Math.round(withStats.reduce((s,m)=>s+m._s.reach,0)/media.length):0;
+  const avgSaves=media.length?Math.round(withStats.reduce((s,m)=>s+m._s.saves,0)/media.length):0;
+  const avgLikes=media.length?Math.round(withStats.reduce((s,m)=>s+m._s.likes,0)/media.length):0;
+  const engArr=withStats.filter(m=>m._s.reach>0).map(m=>(m._s.likes+m._s.comments+m._s.saves+m._s.shares)/m._s.reach*100);
+  const avgEngRate=engArr.length?(engArr.reduce((s,v)=>s+v,0)/engArr.length).toFixed(1):'—';
   const dayMap={0:'Sunday',1:'Monday',2:'Tuesday',3:'Wednesday',4:'Thursday',5:'Friday',6:'Saturday'};
-  const dayReach={};
-  media.forEach(m=>{const d=new Date(m.timestamp).getDay();if(!dayReach[d])dayReach[d]=[];dayReach[d].push(m.insights?.reach||0);});
-  const bestDay=Object.entries(dayReach).map(([d,v])=>({day:parseInt(d),avg:v.reduce((s,x)=>s+x,0)/v.length})).sort((a,b)=>b.avg-a.avg)[0];
-  const topPlays=[...reels].sort((a,b)=>(b.insights?.plays||0)-(a.insights?.plays||0))[0];
+  const dayLikes={};
+  withStats.forEach(m=>{const d=new Date(m.timestamp).getDay();if(!dayLikes[d])dayLikes[d]=[];dayLikes[d].push(m._s.likes);});
+  const bestDay=Object.entries(dayLikes).map(([d,v])=>({day:parseInt(d),avg:v.reduce((s,x)=>s+x,0)/v.length})).sort((a,b)=>b.avg-a.avg)[0];
+  const topPost=[...withStats].sort((a,b)=>(b._s.plays||b._s.likes)-(a._s.plays||a._s.likes))[0];
   const rows=[
-    {l:'Avg reel plays',v:fmtNum(avgPlays)},
-    {l:'Avg reach / post',v:fmtNum(avgReach)},
-    {l:'Avg saves / post',v:fmtNum(avgSaves)},
-    {l:'Avg engagement rate',v:avgEngRate+'%'},
+    avgPlays>0?{l:'Avg reel plays',v:fmtNum(avgPlays)}:null,
+    avgReach>0?{l:'Avg reach / post',v:fmtNum(avgReach)}:null,
+    avgSaves>0?{l:'Avg saves / post',v:fmtNum(avgSaves)}:null,
+    {l:'Avg likes / post',v:fmtNum(avgLikes)},
+    avgEngRate!=='—'?{l:'Avg engagement rate',v:avgEngRate+'%'}:null,
     bestDay?{l:'Best posting day',v:dayMap[bestDay.day]}:null,
-    {l:'Reels tracked',v:reels.length.toString()},
+    {l:'Posts in range',v:media.length.toString()},
   ].filter(Boolean);
-  el.innerHTML=`<div>${rows.map(r=>`<div class="insight-row-a"><span class="insight-lbl">${r.l}</span><span class="insight-val">${r.v}</span></div>`).join('')}</div>`+(topPlays?`<div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);"><div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--text2);margin-bottom:5px;">Top reel by plays</div><div style="font-size:11px;font-weight:500;line-height:1.5;">"${(topPlays.caption||'').substring(0,70)}…"</div><div style="font-size:10px;color:var(--green);font-weight:500;margin-top:2px;">${fmtNum(topPlays.insights?.plays||0)} plays · ${fmtNum(topPlays.insights?.reach||0)} reach</div></div>`:'');
+  el.innerHTML=`<div>${rows.map(r=>`<div class="insight-row-a"><span class="insight-lbl">${r.l}</span><span class="insight-val">${r.v}</span></div>`).join('')}</div>`+(topPost?`<div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);"><div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--text2);margin-bottom:5px;">Top post in range</div><div style="font-size:11px;font-weight:500;line-height:1.5;">"${(topPost.caption||'').substring(0,70)}…"</div><div style="font-size:10px;color:var(--green);font-weight:500;margin-top:2px;">${topPost._s.plays?fmtNum(topPost._s.plays)+' plays · ':''} ${fmtNum(topPost._s.likes)} likes</div></div>`:'');
 }
 
 function renderAIRecs(media,profile,accountInsights){
   const el=document.getElementById('ai-recs');
   if(!media||!media.length){el.innerHTML='<div class="empty">No data yet.</div>';return;}
+  const withStats=media.map(m=>({...m,_s:getPostStats(m)}));
   const recs=[];
-  const reels=media.filter(m=>m.media_type==='VIDEO'||m.media_type==='REELS');
-  // Save rate
-  const withReach=media.filter(m=>(m.insights?.reach||0)>0);
-  if(withReach.length){const topSaveRate=Math.max(...withReach.map(m=>((m.insights?.saved||0)/(m.insights?.reach||1)*100)));const avgSaveRate=(withReach.reduce((s,m)=>s+(m.insights?.saved||0)/(m.insights?.reach||1)*100,0)/withReach.length);recs.push({tag:'Save Rate',text:`Your average save rate is ${avgSaveRate.toFixed(1)}%. ${avgSaveRate>=3?'That\'s strong — educational or coaching content people want to revisit is driving it. Keep producing value-first content.':'Saves indicate lasting value. Add a clear "save this for later" CTA, and focus on coaching or technique content that people return to.'}`});}
-  // Play ratio
-  if(reels.length>=2){const avgPlays=reels.reduce((s,m)=>s+(m.insights?.plays||0),0)/reels.length;const avgReach=reels.reduce((s,m)=>s+(m.insights?.reach||0),0)/reels.length;const ratio=avgReach>0?(avgPlays/avgReach).toFixed(1):0;recs.push({tag:'Replay Rate',text:`Your reels average ${ratio}x plays per unique viewer. ${parseFloat(ratio)>=1.5?'People are rewatching — your hooks are working. Double down on the first 3 seconds being direct and specific.':'Focus on stronger opening 3 seconds. Cut any intro or buildup — start mid-sentence or with the most interesting part.'}`});}
-  // Best content type
-  const top3=([...media].sort((a,b)=>(b.insights?.plays||b.insights?.reach||0)-(a.insights?.plays||a.insights?.reach||0)).slice(0,3));const topCap=(top3[0]?.caption||'').substring(0,60);recs.push({tag:'What\'s Working',text:`Your top content leads with "${topCap}…". Study the pattern — the topic, opening structure, and whether it\'s educational or personal. Your next 3 videos should follow the same formula.`});
-  // Follower growth opportunity
-  if(profile.followers_count&&accountInsights.reach){const ratio=Math.round(accountInsights.reach/profile.followers_count*100);recs.push({tag:'Distribution',text:`You reached ${ratio}% of your follower count over the last 30 days. ${ratio>80?'The algorithm is distributing your content beyond your following — post consistently to maintain this momentum.':'Increase posting frequency to 5–7x per week. Volume signals activity to the algorithm and compounds reach over time.'}`});}
+  // Engagement
+  const engArr=withStats.filter(m=>m._s.reach>0).map(m=>(m._s.likes+m._s.comments+m._s.saves+m._s.shares)/m._s.reach*100);
+  const avgEng=engArr.length?(engArr.reduce((s,v)=>s+v,0)/engArr.length):0;
+  if(avgEng>0){recs.push({tag:'Engagement',text:`Your avg engagement is ${avgEng.toFixed(1)}%. ${avgEng>=5?'That is strong — your audience is responding. Double down on the format and topics driving those numbers.':avgEng>=3?'Solid baseline. Focus on ending your captions with a question to drive more comments.':'Below 3% signals low content-audience fit. Test new formats — more personal storytelling, POV hooks, or direct-to-camera.')}`});}
+  // Best day
+  const dayMap={0:'Sundays',1:'Mondays',2:'Tuesdays',3:'Wednesdays',4:'Thursdays',5:'Fridays',6:'Saturdays'};
+  const dayLikes={};
+  withStats.forEach(m=>{const d=new Date(m.timestamp).getDay();if(!dayLikes[d])dayLikes[d]=[];dayLikes[d].push(m._s.likes);});
+  const sorted=Object.entries(dayLikes).map(([d,v])=>({day:parseInt(d),avg:v.reduce((s,x)=>s+x,0)/v.length,count:v.length})).sort((a,b)=>b.avg-a.avg);
+  if(sorted.length>=2){recs.push({tag:'Posting Day',text:`Your posts on ${dayMap[sorted[0].day]} average ${Math.round(sorted[0].avg)} likes — your best day. ${dayMap[sorted[sorted.length-1].day]} perform weakest. Shift low-priority content away from ${dayMap[sorted[sorted.length-1].day]}.`});}
+  // Saves
+  const avgSaves=withStats.reduce((s,m)=>s+m._s.saves,0)/withStats.length;
+  if(avgSaves>0){recs.push({tag:'Save Rate',text:`Posts averaging ${Math.round(avgSaves)} saves. ${avgSaves>100?'High save rate indicates you are producing reference-worthy content — keep creating educational or technique-heavy posts.':'Low saves suggest your content is enjoyable in the moment but not bookmarked. Add more actionable takeaways or tips people want to revisit.'}`});}
+  // Volume
+  const totalPosts=withStats.length;
+  const filterDays=analyticsTimeFilter==='all'?90:parseInt(analyticsTimeFilter);
+  const postsPerWeek=(totalPosts/(filterDays/7)).toFixed(1);
+  recs.push({tag:'Volume',text:`You are posting ~${postsPerWeek}x/week in this window. ${parseFloat(postsPerWeek)>=5?'Good volume — consistency is compounding. Maintain this cadence.':parseFloat(postsPerWeek)>=3?'3–5x/week is a solid base. Push toward daily to accelerate growth.':'Under 3x/week limits growth significantly. Set a minimum of 5 posts per week to signal activity to the algorithm.'}`});
+  if(!recs.length){el.innerHTML='<div class="empty">Log stats on your posts to unlock AI recommendations.</div>';return;}
   el.innerHTML=recs.map(r=>`<div class="rec-item"><div class="rec-tag">${r.tag}</div><div class="rec-text">${r.text}</div></div>`).join('');
 }
-
 // ============ PLANNER ============
 let wbNotes=[],plannerIdeasStatus={},plannerFilter='all',dragNote=null,dragOX=0,dragOY=0;
 
@@ -1358,5 +1525,56 @@ window.addEventListener('DOMContentLoaded',()=>{
   initWbDrag();renderBoard();renderPlannerIdeas();renderAnalytics();
 });
 </script>
+
+<!-- STATS LOG MODAL -->
+<div id="stats-modal-overlay" class="stats-modal-overlay" style="display:none;" onclick="closeStatsModal(event)">
+  <div class="stats-modal" onclick="event.stopPropagation()">
+    <div class="stats-modal-header">
+      <div class="stats-modal-thumb" id="sml-thumb">▶</div>
+      <div style="flex:1;min-width:0;">
+        <div class="stats-modal-caption" id="sml-caption"></div>
+        <div class="stats-modal-date" id="sml-date"></div>
+        <a id="sml-link" href="#" target="_blank" style="font-size:10px;color:var(--text3);text-decoration:none;">View on Instagram ↗</a>
+      </div>
+      <button onclick="closeStatsModal()" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:0;line-height:1;flex-shrink:0;">×</button>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.5;">Log stats from Instagram Insights. Each entry is saved with today's date so you can track how your video grows over time.</div>
+    <div class="stats-input-grid">
+      <div class="stats-input-group">
+        <label class="stats-input-label">Plays</label>
+        <input class="stats-input" type="number" id="sml-plays" placeholder="e.g. 12400" min="0">
+      </div>
+      <div class="stats-input-group">
+        <label class="stats-input-label">Reach</label>
+        <input class="stats-input" type="number" id="sml-reach" placeholder="e.g. 8200" min="0">
+      </div>
+      <div class="stats-input-group">
+        <label class="stats-input-label">Saves</label>
+        <input class="stats-input" type="number" id="sml-saves" placeholder="e.g. 340" min="0">
+      </div>
+      <div class="stats-input-group">
+        <label class="stats-input-label">Shares</label>
+        <input class="stats-input" type="number" id="sml-shares" placeholder="e.g. 180" min="0">
+      </div>
+      <div class="stats-input-group">
+        <label class="stats-input-label">Likes</label>
+        <input class="stats-input" type="number" id="sml-likes" placeholder="e.g. 620" min="0">
+      </div>
+      <div class="stats-input-group">
+        <label class="stats-input-label">Comments</label>
+        <input class="stats-input" type="number" id="sml-comments" placeholder="e.g. 44" min="0">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-dark" style="flex:1;" onclick="saveManualStats()">Save Stats</button>
+      <button onclick="closeStatsModal()" style="padding:8px 16px;border-radius:8px;border:0.5px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;">Cancel</button>
+    </div>
+    <div id="sml-history" style="display:none;" class="stats-history">
+      <div class="stats-history-title">Previous Logs</div>
+      <div id="sml-history-rows"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
