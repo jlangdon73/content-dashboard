@@ -973,13 +973,18 @@ function fmtNum(n){if(!n||isNaN(n))return'0';n=parseInt(n);if(n>=1000000)return(
 
 function renderAnalytics(){
   if(!analyticsData)return;
-  const{profile={},accountInsights={},media=[]}=analyticsData;
-  document.getElementById('an-followers').textContent=fmtNum(profile.followers_count);
-  document.getElementById('an-reach').textContent=fmtNum(accountInsights.reach);
-  document.getElementById('an-impressions').textContent=fmtNum(accountInsights.impressions);
-  document.getElementById('an-pviews').textContent=fmtNum(accountInsights.profile_views);
+  const{profile={},accountInsights={},media=[],usingBusinessAPI=false}=analyticsData;
+  // Followers: only available on Business/Creator API
+  const followersEl=document.getElementById('an-followers');
+  if(profile.followers_count!=null){followersEl.textContent=fmtNum(profile.followers_count);}
+  else{followersEl.textContent='—';followersEl.title='Requires Instagram Creator/Business account';}
+  // Insights: only available on Business/Creator API
+  document.getElementById('an-reach').textContent=accountInsights.reach?fmtNum(accountInsights.reach):'—';
+  document.getElementById('an-impressions').textContent=accountInsights.impressions?fmtNum(accountInsights.impressions):'—';
+  document.getElementById('an-pviews').textContent=accountInsights.profile_views?fmtNum(accountInsights.profile_views):'—';
   const ts=localStorage.getItem('jl-analytics-ts');
-  if(ts){const d=new Date(parseInt(ts));document.getElementById('analytics-sync-status').textContent='Last synced: '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'  •  '+media.length+' posts loaded';}
+  const apiNote=usingBusinessAPI?'':'  •  Switch to Creator account for reach & plays data';
+  if(ts){const d=new Date(parseInt(ts));document.getElementById('analytics-sync-status').textContent='Last synced: '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'  •  '+media.length+' posts'+apiNote;}
   renderPostsTable(media);renderContentInsights(media,profile,accountInsights);renderAIRecs(media,profile,accountInsights);
 }
 
