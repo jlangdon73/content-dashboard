@@ -184,6 +184,32 @@ textarea{resize:vertical;}
 .ai-txt:focus{border-color:var(--accent);}
 .ai-go{padding:8px 14px;background:var(--accent);color:var(--accent-text);border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;border-radius:var(--radius);}
 .ai-go:hover{opacity:0.85;}
+/* ── ANALYTICS TAB ── */
+.analytics-grid{display:grid;grid-template-columns:1fr 330px;gap:1.5rem;align-items:start;}
+.post-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);}
+.post-row:last-child{border-bottom:none;}
+.post-thumb{width:52px;height:52px;border-radius:var(--radius);background:var(--surface2);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text3);}
+.post-thumb img{width:100%;height:100%;object-fit:cover;}
+.post-info{flex:1;min-width:0;}
+.post-caption{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.post-meta{font-size:10px;color:var(--text2);margin-bottom:6px;}
+.post-metrics{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.metric-chip{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.metric-num{font-size:12px;font-weight:500;}
+.metric-lbl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;}
+.eng-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:500;}
+.insight-row-a{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);}
+.insight-row-a:last-child{border-bottom:none;}
+.insight-lbl{font-size:11px;color:var(--text2);}
+.insight-val{font-size:13px;font-weight:500;}
+.rec-item{padding:10px 0;border-bottom:0.5px solid var(--border);}
+.rec-item:last-child{border-bottom:none;}
+.rec-tag{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--text2);margin-bottom:4px;}
+.rec-text{font-size:12px;line-height:1.65;}
+.sync-empty{text-align:center;padding:3rem 1rem;color:var(--text2);}
+.sync-empty-icon{font-size:32px;margin-bottom:12px;}
+.sync-empty-text{font-size:13px;font-weight:500;margin-bottom:6px;}
+.sync-empty-sub{font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:16px;}
 @media(max-width:700px){
 .three-col{grid-template-columns:1fr;}
 .stat-row{grid-template-columns:repeat(2,1fr);}
@@ -193,6 +219,7 @@ textarea{resize:vertical;}
 .panel{padding:1rem;}
 .form-row{grid-template-columns:1fr;}
 .planner-grid{grid-template-columns:1fr;}
+.analytics-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -202,7 +229,7 @@ textarea{resize:vertical;}
   <div class="nav">
     <button class="nav-btn active" onclick="switchTab('overview',this)">Overview</button>
     <button class="nav-btn" onclick="switchTab('hook-tester',this)">Hook Tester</button>
-    <button class="nav-btn" onclick="switchTab('remotion',this)">Remotion</button>
+    <button class="nav-btn" onclick="switchTab('analytics',this)">Analytics</button>
     <button class="nav-btn" onclick="switchTab('planner',this)">Planner</button>
   </div>
 </div>
@@ -381,33 +408,56 @@ textarea{resize:vertical;}
   </div>
 </div>
 
-<!-- REMOTION -->
-<div id="tab-remotion" class="panel">
-  <p class="sub">Select clips, pick a video type, and generate a Claude Remotion prompt. Use hook variations to test different openings on the same video.</p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
+<!-- ANALYTICS -->
+<div id="tab-analytics" class="panel">
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
     <div>
-      <div class="sh" style="margin-bottom:8px;">1. Select folder</div>
-      <div class="folder-grid" id="folder-grid"></div>
-      <div class="sh" style="margin-bottom:6px;">2. Select clips</div>
-      <div class="clip-list" id="clip-list-r"></div>
-      <div class="divider"></div>
-      <div class="sh" style="margin-bottom:8px;">3. Video type</div>
-      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;" id="vtype-r"></div>
-      <label class="lbl">Main hook</label>
-      <input type="text" id="main-hook" placeholder="Opening line..." oninput="buildPrompt()">
+      <div class="sh" style="margin-bottom:2px;">Instagram Analytics</div>
+      <div style="font-size:11px;color:var(--text2);" id="analytics-sync-status">Not synced yet — hit Sync to pull your data.</div>
     </div>
-    <div>
-      <div class="sh" style="margin-bottom:6px;">Hook variation tester</div>
-      <p class="sub">Same video, different opening 3-5 seconds per version.</p>
-      <div id="hook-vars"></div>
-      <button class="btn-outline" style="width:100%;margin-bottom:1rem;" onclick="addHookVar()">+ Add hook variation</button>
-      <div class="divider"></div>
-      <div class="sh" style="margin-bottom:6px;">Remotion prompt</div>
-      <div class="prompt-box" id="remotion-prompt">Select clips and a video type to generate your prompt.</div>
-      <div class="btn-row" style="margin-bottom:1rem;">
-        <button class="btn-dark" onclick="copyEl('remotion-prompt',this)">Copy prompt</button>
+    <button class="btn-dark" id="sync-btn" onclick="syncAnalytics()">Sync Analytics</button>
+  </div>
+  <!-- Account stats -->
+  <div class="stat-row" style="margin-bottom:1.5rem;">
+    <div class="stat"><div class="stat-label">Followers</div><div class="stat-val" id="an-followers">—</div></div>
+    <div class="stat"><div class="stat-label">30-day Reach</div><div class="stat-val" id="an-reach">—</div></div>
+    <div class="stat"><div class="stat-label">30-day Impressions</div><div class="stat-val" id="an-impressions">—</div></div>
+    <div class="stat"><div class="stat-label">Profile Views</div><div class="stat-val" id="an-pviews">—</div></div>
+  </div>
+  <!-- Two-column body -->
+  <div class="analytics-grid">
+    <!-- LEFT: posts table -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="sh" style="margin:0;">Posts Performance</div>
+        <div style="display:flex;gap:5px;" id="posts-sort-pills">
+          <button class="filter-pill active" onclick="sortPosts('date',this)">Recent</button>
+          <button class="filter-pill" onclick="sortPosts('plays',this)">Top Plays</button>
+          <button class="filter-pill" onclick="sortPosts('saves',this)">Top Saves</button>
+          <button class="filter-pill" onclick="sortPosts('reach',this)">Top Reach</button>
+        </div>
       </div>
-      <div id="hook-test-prompts"></div>
+      <div id="posts-table">
+        <div class="sync-empty">
+          <div class="sync-empty-icon">📊</div>
+          <div class="sync-empty-text">No data yet</div>
+          <div class="sync-empty-sub">Hit "Sync Analytics" to pull your Instagram posts, plays, reach, saves, and more. Data is read-only — nothing is posted.</div>
+          <button class="btn-dark" onclick="syncAnalytics()">Sync Analytics</button>
+        </div>
+      </div>
+    </div>
+    <!-- RIGHT: insights + recommendations -->
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+      <div class="card">
+        <div class="sh" style="margin-bottom:10px;">Content Insights</div>
+        <div id="content-insights"><div class="empty">Sync to see insights.</div></div>
+      </div>
+      <div class="card">
+        <div class="sh" style="margin-bottom:10px;">AI Recommendations</div>
+        <div class="sub" style="margin-bottom:10px;">Based on your actual performance data.</div>
+        <div id="ai-recs"><div class="empty">Sync to see recommendations.</div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -491,7 +541,7 @@ function loadStorage(){
   try{customIdeas=JSON.parse(localStorage.getItem('jl-custom-ideas')||'[]');}catch(e){customIdeas=[];}
   try{ideaEdits=JSON.parse(localStorage.getItem('jl-idea-edits')||'{}');}catch(e){ideaEdits={};}
   try{calPlanEdits=JSON.parse(localStorage.getItem('jl-calplan')||'{}');}catch(e){calPlanEdits={};}
-  loadPlannerStorage();
+  loadPlannerStorage();loadAnalyticsStorage();
 }
 
 function savePosts(){localStorage.setItem('jl-posts',JSON.stringify(posts));updateStats();}
@@ -767,7 +817,6 @@ function deleteIdea(key){
 }
 
 // ============ HOOK TESTER ============
-const folders=[{name:'Photoshoot',clips:['Hero walk away','Lean pose front','Cinematic profile','Jump sequence slow mo']},{name:'Training',clips:['Morning lift session','Approach drills','Bar clearance attempt']},{name:'Brand / XXO',clips:['Hoodie unboxing raw','Product close up','Colorway flat lay']},{name:'Lifestyle',clips:['Campus walk morning','Track field wide shot']}];
 let htBodyFile=null;let htHookFiles=[];let hookVals=[];
 const API_BASE='https://xxo-content-api.vercel.app';
 const hookSuggestions={coaching:['If you high jump, stop scrolling. This is for you.','Your approach is fine. Your takeoff is killing you.','Nobody teaches this part. It is why most people hit the bar.','The 5 mistakes high jumpers make that cost them inches.','The one thing Barshim does that nobody talks about.'],faith:['You are chasing something that will not satisfy you.','Comparison is the thief of joy. And most athletes are getting robbed.','The hardest thing I have done as an athlete is trust when I could not see.','Holding onto that is costing you more than you think.','What happens when you get everything and it is still not enough.'],brand:['30 hoodies. One drop. No restock. April 11th.','Nobody needs another clothing brand. So we built something different.','Built for the athlete who shows up when nobody is watching.','The X is the setback. The O is what waits on the other side.','Most brands make clothes. We make a statement.'],cinematic:['Formed in hard places.','The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.','This is what the process actually looks like.'],lifestyle:['This is what building from nothing looks like.','You become the standard of the people around you.','Protect your energy like you protect your training.','The most important decision has nothing to do with training.','Who you spend time with is who you become.']};
@@ -893,25 +942,133 @@ function setUploadProgress(idx,total,filename,status){
   const statusColor={uploading:'var(--text2)',done:'var(--green)',error:'#D85A30'}[status];
   document.getElementById('upload-progress-inner').innerHTML=`<div style="font-size:11px;color:var(--text2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${idx+1} of ${total}: ${filename}</div><div style="background:var(--border);border-radius:4px;height:5px;overflow:hidden;margin-bottom:6px;"><div style="background:var(--accent);height:100%;width:${pct}%;transition:width 0.4s;border-radius:4px;"></div></div><div style="font-size:10px;font-weight:500;color:${statusColor};">${statusLabel}</div>`;}
 
-function buildTypePrompt(type){return{coaching:`Style: Clear, educational. Slow motion on technique. Numbered text overlays.\nPacing: 2-4 sec avg clips, cut on beat.\nAudio: Low energy background, clear voiceover.\nStructure: Hook → numbered tips → clear takeaway. Under 60 seconds.`,faith:`Style: Personal, cinematic. Natural light, film grain, cool muted tones.\nPacing: Very slow, deliberate pauses, silence intentional.\nAudio: Near silence, voiceover carries the emotion.\nStructure: Tension → experience → faith shift → message → single closing line.`,brand:`Style: Dark, cinematic, premium. Deep blacks, muted tones, film grain.\nColor: Darker and more contrasty, product stands out.\nAudio: Minimal ambient sound.\nEnd: XXO Athletics + April 11th.`,cinematic:`Style: Cool, desaturated, underexposed. Film grain 25. Slow motion. Avg clip 3-6 sec.\nColor: Pull exposure down, reduce saturation 20%, lift contrast.\nAudio: Ambient instrumental no lyrics. Voiceover slow with pauses.\nEnd: Single closing line then fade to black.`,lifestyle:`Style: Light, natural, personal. Warm tones, day in the life feel.\nPacing: Relaxed, conversational.\nAudio: Upbeat low energy background track.`}[type]||'';}
-
 function renderTrialResults(){const list=document.getElementById('trial-results-list');const empty=document.getElementById('trial-empty');if(!trialResults.length){list.innerHTML='';empty.style.display='block';return;}empty.style.display='none';list.innerHTML=trialResults.map((r,ri)=>`<div style="background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:11px;font-weight:500;">${r.baseVideo}</div><div style="font-size:10px;color:var(--text2);">${r.date}</div>${r.winner!==null?`<span style="background:#F0997B;color:#712B13;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;">Winner: V${r.winner+1}</span>`:''}</div>${r.hooks.map((h,hi)=>`<div style="padding:8px 0;border-top:0.5px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div style="font-size:11px;font-weight:500;">V${hi+1}: "${h.substring(0,45)}${h.length>45?'...':''}"</div><button onclick="setWinner(${ri},${hi})" style="font-size:10px;padding:3px 8px;border:0.5px solid var(--border2);border-radius:3px;background:${r.winner===hi?'var(--accent)':'transparent'};color:${r.winner===hi?'var(--accent-text)':'var(--text)'};cursor:pointer;">Winner</button></div><div style="display:flex;gap:3px;">${[1,2,3,4,5].map(s=>`<span class="star${r.ratings[hi]>=s?' on':''}" onclick="rateTrial(${ri},${hi},${s})">&#9733;</span>`).join('')}</div></div>`).join('')}<div style="margin-top:8px;"><input type="text" value="${r.notes||''}" placeholder="Notes on what won and why..." style="font-size:11px;" oninput="trialResults[${ri}].notes=this.value;saveTrials();"></div></div>`).join('');}
 function rateTrial(ri,hi,rating){trialResults[ri].ratings[hi]=rating;saveTrials();renderTrialResults();}
 function setWinner(ri,hi){trialResults[ri].winner=hi;saveTrials();renderTrialResults();toast(`V${hi+1} marked as winner`);}
 
-// ============ REMOTION TAB ============
-let selFolder=0,selClips=new Set(),hookVars=[],selVtype=0;const vtypes=['Cinematic inspirational','High jump coaching','XXO brand content','Faith and mindset'];const vtypeKeys=['cinematic','coaching','brand','faith'];
-function renderFolders(){document.getElementById('folder-grid').innerHTML=folders.map((f,i)=>`<div class="folder-card${i===selFolder?' sel':''}" onclick="selFolder=${i};renderFolders();renderClips();"><div class="folder-icon"></div><div class="folder-name">${f.name}</div><div class="folder-ct">${f.clips.length} clips</div></div>`).join('');}
-function renderClips(){document.getElementById('clip-list-r').innerHTML=folders[selFolder].clips.map((c,i)=>{const id=`${selFolder}-${i}`;const s=selClips.has(id);return `<div class="clip${s?' sel':''}" onclick="toggleClip('${id}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${c}</div><div class="clip-chk">${s?'✓':''}</div></div>`;}).join('');}
-function toggleClip(id){if(selClips.has(id))selClips.delete(id);else selClips.add(id);renderClips();buildPrompt();}
-function renderVtypes(){document.getElementById('vtype-r').innerHTML=vtypes.map((v,i)=>`<label style="font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="vt" value="${i}" ${i===0?'checked':''} onchange="selVtype=${i};buildPrompt();"> ${v}</label>`).join('');}
-const promptTpls={cinematic:(clips,hook)=>`Edit a cinematic inspirational video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with slow cinematic shot'}"\n\nStyle: Cool, desaturated, underexposed. Film grain 25. Slow motion. Avg clip 3-6 sec.\nColor: Pull exposure down, reduce saturation 20%, lift contrast.\nAudio: Ambient instrumental no lyrics. Voiceover slow.\nEnd: Single closing line then fade to black.`,coaching:(clips,hook)=>`Edit a high jump coaching video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with a bold direct statement'}"\n\nStyle: Clear, educational. Slow motion on technique. Numbered text overlays.\nPacing: 2-4 sec avg. Audio: Low energy background, clear voiceover.\nStructure: Hook → tips → takeaway. Under 60 seconds.`,brand:(clips,hook)=>`Edit an XXO Athletics brand video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with product detail close up'}"\n\nStyle: Dark, cinematic, premium. Deep blacks, muted tones. Film grain.\nAudio: Minimal ambient sound.\nEnd: XXO Athletics + April 11th.`,faith:(clips,hook)=>`Edit a faith and mindset video.\nClips: ${clips.join(', ')}\nHook: "${hook||'Open with a question that creates tension'}"\n\nStyle: Personal, cinematic. Natural light, film grain, cool muted tones.\nPacing: Very slow. Deliberate pauses. Silence intentional.\nStructure: Tension → experience → faith shift → message → single closing line.`};
-function getClipNames(){return Array.from(selClips).map(id=>{const[fi,ci]=id.split('-').map(Number);return folders[fi].clips[ci];});}
-function buildPrompt(){const clips=getClipNames();const hook=document.getElementById('main-hook').value.trim();const key=vtypeKeys[selVtype];document.getElementById('remotion-prompt').textContent=clips.length?promptTpls[key](clips,hook):'Select clips and a video type to generate your prompt.';buildHookTestPrompts();}
-function addHookVar(){hookVars.push('');renderHookVars();}
-function removeHookVar(i){hookVars.splice(i,1);renderHookVars();buildHookTestPrompts();}
-function renderHookVars(){const c=document.getElementById('hook-vars');c.innerHTML=hookVars.length?hookVars.map((h,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--surface);margin-bottom:5px;"><div style="font-size:10px;font-weight:500;color:var(--text2);min-width:18px;">V${i+1}</div><input type="text" value="${h.replace(/"/g,'&quot;')}" placeholder="Hook variation ${i+1}..." style="flex:1;border:none;background:transparent;outline:none;font-size:11px;" oninput="hookVars[${i}]=this.value;buildHookTestPrompts();"><button style="font-size:10px;color:var(--text2);cursor:pointer;padding:2px 6px;border:0.5px solid var(--border);border-radius:3px;background:transparent;" onclick="removeHookVar(${i})">remove</button></div>`).join(''):'<p class="empty" style="margin-bottom:8px;">No variations yet.</p>';}
-function buildHookTestPrompts(){const c=document.getElementById('hook-test-prompts');const clips=getClipNames();const key=vtypeKeys[selVtype];const filled=hookVars.filter(h=>h.trim());if(!filled.length||!clips.length){c.innerHTML='';return;}c.innerHTML=`<div class="divider"></div><div class="sh" style="margin-bottom:8px;">Hook test prompts</div>`+filled.map((h,i)=>{const id=`hkp-${i}`;return `<div style="margin-bottom:12px;"><div style="font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Version ${i+1}</div><div class="prompt-box" id="${id}" style="font-size:10px;">Keep the full video IDENTICAL. Swap ONLY the first 3-5 seconds.\n\nHook V${i+1}: "${h}"\n\n${promptTpls[key](clips,h)}</div><button class="btn-outline" style="font-size:10px;padding:5px 10px;" onclick="copyEl('${id}',this)">Copy V${i+1}</button></div>`;}).join('');}
+// ============ ANALYTICS TAB ============
+let analyticsData=null,postsSortKey='date';
+
+function loadAnalyticsStorage(){
+  try{analyticsData=JSON.parse(localStorage.getItem('jl-analytics')||'null');}catch(e){analyticsData=null;}
+}
+function saveAnalyticsData(){localStorage.setItem('jl-analytics',JSON.stringify(analyticsData));localStorage.setItem('jl-analytics-ts',Date.now().toString());}
+
+async function syncAnalytics(){
+  const btn=document.getElementById('sync-btn');
+  btn.textContent='Syncing…';btn.disabled=true;
+  try{
+    const res=await fetch(`${API_BASE}/api/analytics`);
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error||`HTTP ${res.status}`);}
+    analyticsData=await res.json();
+    saveAnalyticsData();renderAnalytics();
+    toast('Analytics synced');
+  }catch(err){
+    toast('Sync failed: '+err.message,'#D85A30');
+    document.getElementById('analytics-sync-status').textContent='Sync failed: '+err.message;
+  }finally{btn.textContent='Sync Analytics';btn.disabled=false;}
+}
+
+function fmtNum(n){if(!n||isNaN(n))return'0';n=parseInt(n);if(n>=1000000)return(n/1000000).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'K';return n.toString();}
+
+function renderAnalytics(){
+  if(!analyticsData)return;
+  const{profile={},accountInsights={},media=[]}=analyticsData;
+  document.getElementById('an-followers').textContent=fmtNum(profile.followers_count);
+  document.getElementById('an-reach').textContent=fmtNum(accountInsights.reach);
+  document.getElementById('an-impressions').textContent=fmtNum(accountInsights.impressions);
+  document.getElementById('an-pviews').textContent=fmtNum(accountInsights.profile_views);
+  const ts=localStorage.getItem('jl-analytics-ts');
+  if(ts){const d=new Date(parseInt(ts));document.getElementById('analytics-sync-status').textContent='Last synced: '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'  •  '+media.length+' posts loaded';}
+  renderPostsTable(media);renderContentInsights(media,profile,accountInsights);renderAIRecs(media,profile,accountInsights);
+}
+
+function sortPosts(key,btn){
+  postsSortKey=key;
+  document.querySelectorAll('#posts-sort-pills .filter-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  if(analyticsData)renderPostsTable(analyticsData.media||[]);
+}
+
+function renderPostsTable(media){
+  const tbl=document.getElementById('posts-table');
+  if(!media||!media.length){tbl.innerHTML='<div class="sync-empty"><div class="sync-empty-icon">📊</div><div class="sync-empty-text">No posts found</div><div class="sync-empty-sub">Instagram returned no media for this account.</div></div>';return;}
+  const sorted=[...media].sort((a,b)=>{
+    if(postsSortKey==='date')return new Date(b.timestamp)-new Date(a.timestamp);
+    if(postsSortKey==='plays')return((b.insights?.plays||0)-(a.insights?.plays||0));
+    if(postsSortKey==='saves')return((b.insights?.saved||0)-(a.insights?.saved||0));
+    if(postsSortKey==='reach')return((b.insights?.reach||0)-(a.insights?.reach||0));
+    return 0;
+  });
+  tbl.innerHTML=sorted.map(item=>{
+    const ins=item.insights||{};
+    const plays=ins.plays||0,reach=ins.reach||0,saves=ins.saved||0,shares=ins.shares||0;
+    const likes=item.like_count||0,comments=item.comments_count||0;
+    const eng=reach>0?(((likes+comments+saves+shares)/reach)*100).toFixed(1):'—';
+    const engHigh=eng!=='—'&&parseFloat(eng)>=4;
+    const cap=(item.caption||'No caption').substring(0,90);
+    const date=new Date(item.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const typeLabel=item.media_type==='VIDEO'?'REEL':item.media_type||'POST';
+    return `<div class="post-row">
+      <div class="post-thumb">${item.thumbnail_url?`<img src="${item.thumbnail_url}" loading="lazy">`:'▶'}</div>
+      <div class="post-info">
+        <div class="post-caption" title="${cap.replace(/"/g,'&quot;')}">"${cap}${item.caption&&item.caption.length>90?'…':''}"</div>
+        <div class="post-meta">${date} · ${typeLabel}</div>
+        <div class="post-metrics">
+          ${plays?`<div class="metric-chip"><div class="metric-num">${fmtNum(plays)}</div><div class="metric-lbl">plays</div></div>`:''}
+          <div class="metric-chip"><div class="metric-num">${fmtNum(reach)}</div><div class="metric-lbl">reach</div></div>
+          <div class="metric-chip"><div class="metric-num">${likes}</div><div class="metric-lbl">likes</div></div>
+          <div class="metric-chip"><div class="metric-num">${saves}</div><div class="metric-lbl">saves</div></div>
+          <div class="metric-chip"><div class="metric-num">${shares}</div><div class="metric-lbl">shares</div></div>
+          <span class="eng-badge" style="background:${engHigh?'var(--green-bg)':'var(--surface2)'};color:${engHigh?'var(--green-text)':'var(--text2)'};">${eng}% eng</span>
+          ${item.permalink?`<a href="${item.permalink}" target="_blank" style="font-size:10px;color:var(--text3);text-decoration:none;margin-left:auto;">↗</a>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderContentInsights(media,profile,accountInsights){
+  const el=document.getElementById('content-insights');
+  if(!media||!media.length){el.innerHTML='<div class="empty">No data yet.</div>';return;}
+  const reels=media.filter(m=>m.media_type==='VIDEO'||m.media_type==='REELS');
+  const avgPlays=reels.length?Math.round(reels.reduce((s,m)=>s+(m.insights?.plays||0),0)/reels.length):0;
+  const avgReach=media.length?Math.round(media.reduce((s,m)=>s+(m.insights?.reach||0),0)/media.length):0;
+  const avgSaves=media.length?Math.round(media.reduce((s,m)=>s+(m.insights?.saved||0),0)/media.length):0;
+  const avgEng=media.filter(m=>(m.insights?.reach||0)>0).map(m=>{const r=m.insights.reach;return((m.like_count||0)+(m.comments_count||0)+(m.insights?.saved||0)+(m.insights?.shares||0))/r*100;});
+  const avgEngRate=avgEng.length?(avgEng.reduce((s,v)=>s+v,0)/avgEng.length).toFixed(1):'—';
+  const dayMap={0:'Sunday',1:'Monday',2:'Tuesday',3:'Wednesday',4:'Thursday',5:'Friday',6:'Saturday'};
+  const dayReach={};
+  media.forEach(m=>{const d=new Date(m.timestamp).getDay();if(!dayReach[d])dayReach[d]=[];dayReach[d].push(m.insights?.reach||0);});
+  const bestDay=Object.entries(dayReach).map(([d,v])=>({day:parseInt(d),avg:v.reduce((s,x)=>s+x,0)/v.length})).sort((a,b)=>b.avg-a.avg)[0];
+  const topPlays=[...reels].sort((a,b)=>(b.insights?.plays||0)-(a.insights?.plays||0))[0];
+  const rows=[
+    {l:'Avg reel plays',v:fmtNum(avgPlays)},
+    {l:'Avg reach / post',v:fmtNum(avgReach)},
+    {l:'Avg saves / post',v:fmtNum(avgSaves)},
+    {l:'Avg engagement rate',v:avgEngRate+'%'},
+    bestDay?{l:'Best posting day',v:dayMap[bestDay.day]}:null,
+    {l:'Reels tracked',v:reels.length.toString()},
+  ].filter(Boolean);
+  el.innerHTML=`<div>${rows.map(r=>`<div class="insight-row-a"><span class="insight-lbl">${r.l}</span><span class="insight-val">${r.v}</span></div>`).join('')}</div>`+(topPlays?`<div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);"><div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--text2);margin-bottom:5px;">Top reel by plays</div><div style="font-size:11px;font-weight:500;line-height:1.5;">"${(topPlays.caption||'').substring(0,70)}…"</div><div style="font-size:10px;color:var(--green);font-weight:500;margin-top:2px;">${fmtNum(topPlays.insights?.plays||0)} plays · ${fmtNum(topPlays.insights?.reach||0)} reach</div></div>`:'');
+}
+
+function renderAIRecs(media,profile,accountInsights){
+  const el=document.getElementById('ai-recs');
+  if(!media||!media.length){el.innerHTML='<div class="empty">No data yet.</div>';return;}
+  const recs=[];
+  const reels=media.filter(m=>m.media_type==='VIDEO'||m.media_type==='REELS');
+  // Save rate
+  const withReach=media.filter(m=>(m.insights?.reach||0)>0);
+  if(withReach.length){const topSaveRate=Math.max(...withReach.map(m=>((m.insights?.saved||0)/(m.insights?.reach||1)*100)));const avgSaveRate=(withReach.reduce((s,m)=>s+(m.insights?.saved||0)/(m.insights?.reach||1)*100,0)/withReach.length);recs.push({tag:'Save Rate',text:`Your average save rate is ${avgSaveRate.toFixed(1)}%. ${avgSaveRate>=3?'That\'s strong — educational or coaching content people want to revisit is driving it. Keep producing value-first content.':'Saves indicate lasting value. Add a clear "save this for later" CTA, and focus on coaching or technique content that people return to.'}`});}
+  // Play ratio
+  if(reels.length>=2){const avgPlays=reels.reduce((s,m)=>s+(m.insights?.plays||0),0)/reels.length;const avgReach=reels.reduce((s,m)=>s+(m.insights?.reach||0),0)/reels.length;const ratio=avgReach>0?(avgPlays/avgReach).toFixed(1):0;recs.push({tag:'Replay Rate',text:`Your reels average ${ratio}x plays per unique viewer. ${parseFloat(ratio)>=1.5?'People are rewatching — your hooks are working. Double down on the first 3 seconds being direct and specific.':'Focus on stronger opening 3 seconds. Cut any intro or buildup — start mid-sentence or with the most interesting part.'}`});}
+  // Best content type
+  const top3=([...media].sort((a,b)=>(b.insights?.plays||b.insights?.reach||0)-(a.insights?.plays||a.insights?.reach||0)).slice(0,3));const topCap=(top3[0]?.caption||'').substring(0,60);recs.push({tag:'What\'s Working',text:`Your top content leads with "${topCap}…". Study the pattern — the topic, opening structure, and whether it\'s educational or personal. Your next 3 videos should follow the same formula.`});
+  // Follower growth opportunity
+  if(profile.followers_count&&accountInsights.reach){const ratio=Math.round(accountInsights.reach/profile.followers_count*100);recs.push({tag:'Distribution',text:`You reached ${ratio}% of your follower count over the last 30 days. ${ratio>80?'The algorithm is distributing your content beyond your following — post consistently to maintain this momentum.':'Increase posting frequency to 5–7x per week. Volume signals activity to the algorithm and compounds reach over time.'}`});}
+  el.innerHTML=recs.map(r=>`<div class="rec-item"><div class="rec-tag">${r.tag}</div><div class="rec-text">${r.text}</div></div>`).join('');
+}
 
 // ============ PLANNER ============
 let wbNotes=[],plannerIdeasStatus={},plannerFilter='all',dragNote=null,dragOX=0,dragOY=0;
@@ -1192,8 +1349,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   loadStorage();
   const drop=new Date('2026-04-11');const now=new Date();
   document.getElementById('days-out').textContent=Math.max(0,Math.ceil((drop-now)/(1000*60*60*24)));
-  buildCal();renderSchedule();renderIdeas();renderFolders();renderClips();renderVtypes();renderHookClipsList();renderHookInputs();renderTrialResults();
-  initWbDrag();renderBoard();renderPlannerIdeas();
+  buildCal();renderSchedule();renderIdeas();renderHookClipsList();renderHookInputs();renderTrialResults();
+  initWbDrag();renderBoard();renderPlannerIdeas();renderAnalytics();
 });
 </script>
 </body>
