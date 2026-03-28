@@ -1224,7 +1224,7 @@ function renderAIRecs(media,profile,accountInsights){
   // Engagement
   const engArr=withStats.filter(m=>m._s.reach>0).map(m=>(m._s.likes+m._s.comments+m._s.saves+m._s.shares)/m._s.reach*100);
   const avgEng=engArr.length?(engArr.reduce((s,v)=>s+v,0)/engArr.length):0;
-  if(avgEng>0){recs.push({tag:'Engagement',text:`Your avg engagement is ${avgEng.toFixed(1)}%. ${avgEng>=5?'That is strong — your audience is responding. Double down on the format and topics driving those numbers.':avgEng>=3?'Solid baseline. Focus on ending your captions with a question to drive more comments.':'Below 3% signals low content-audience fit. Test new formats — more personal storytelling, POV hooks, or direct-to-camera.')}`});}
+  if(avgEng>0){recs.push({tag:'Engagement',text:`Your avg engagement is ${avgEng.toFixed(1)}%. ${avgEng>=5?'Strong — your audience is responding. Double down on what is working.':avgEng>=3?'Solid baseline. End captions with a question to drive more comments.':'Below 3% signals low content-audience fit. Test more personal storytelling and direct-to-camera formats.'}`});}
   // Best day
   const dayMap={0:'Sundays',1:'Mondays',2:'Tuesdays',3:'Wednesdays',4:'Thursdays',5:'Fridays',6:'Saturdays'};
   const dayLikes={};
