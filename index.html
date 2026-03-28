@@ -132,6 +132,58 @@ textarea{resize:vertical;}
 .collapsible-toggle:hover{color:var(--text);}
 .add-form-btn{display:flex;align-items:center;gap:6px;background:transparent;border:0.5px solid var(--border2);padding:8px 12px;border-radius:var(--radius);font-size:11px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.15s;}
 .add-form-btn:hover{border-color:var(--border);background:var(--surface2);}
+/* ── PLANNER TAB ── */
+.planner-grid{display:grid;grid-template-columns:1fr 390px;gap:1.5rem;align-items:start;}
+.wb-wrap{display:flex;flex-direction:column;min-height:580px;}
+.wb-toolbar{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.wb-canvas{flex:1;position:relative;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;min-height:520px;cursor:default;}
+.wb-grid{position:absolute;inset:0;background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;}
+.wb-note{position:absolute;width:190px;border-radius:var(--radius);padding:0;cursor:default;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:1;}
+.wb-note-handle{height:22px;border-radius:var(--radius) var(--radius) 0 0;display:flex;align-items:center;justify-content:space-between;padding:0 8px;cursor:grab;flex-shrink:0;}
+.wb-note-handle:active{cursor:grabbing;}
+.wb-note-handle-dots{font-size:11px;color:rgba(0,0,0,0.25);letter-spacing:1px;}
+.wb-note-close{background:transparent;border:none;cursor:pointer;font-size:13px;color:rgba(0,0,0,0.3);padding:0;line-height:1;font-weight:500;}
+.wb-note-close:hover{color:rgba(0,0,0,0.6);}
+.wb-note-text{width:100%;min-height:80px;background:transparent;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;font-size:12px;line-height:1.65;padding:6px 10px 10px;color:var(--text);}
+.wb-note.yellow{background:#FFFDE7;}
+.wb-note.yellow .wb-note-handle{background:#FFF176;}
+.wb-note.blue{background:#E3F2FD;}
+.wb-note.blue .wb-note-handle{background:#90CAF9;}
+.wb-note.green{background:#E8F5E9;}
+.wb-note.green .wb-note-handle{background:#A5D6A7;}
+.wb-note.pink{background:#FCE4EC;}
+.wb-note.pink .wb-note-handle{background:#F48FB1;}
+.wb-note.orange{background:#FFF3E0;}
+.wb-note.orange .wb-note-handle{background:#FFCC80;}
+.add-note-btn{padding:5px 12px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;color:var(--text);}
+.add-note-btn:hover{background:var(--border);}
+/* right column */
+.planner-right{display:flex;flex-direction:column;gap:1rem;}
+.ideas-scroll-sm{max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+.pi-row{display:flex;align-items:center;gap:7px;padding:6px 9px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--surface);}
+.pi-hook{font-size:11px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pi-status{font-size:9px;padding:2px 7px;border-radius:8px;cursor:pointer;white-space:nowrap;flex-shrink:0;border:none;font-family:'DM Sans',sans-serif;font-weight:500;}
+.pi-status.s-idea{background:var(--surface2);color:var(--text2);}
+.pi-status.s-filming{background:var(--blue-bg);color:var(--blue-text);}
+.pi-status.s-editing{background:var(--purple-bg);color:var(--purple-text);}
+.pi-status.s-done{background:var(--green-bg);color:var(--green-text);}
+.pi-send{font-size:13px;cursor:pointer;color:var(--text3);flex-shrink:0;background:none;border:none;padding:0;}
+.pi-send:hover{color:var(--accent);}
+/* AI chat */
+.ai-chat-wrap{display:flex;flex-direction:column;gap:0;}
+.ai-quick-btns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.ai-q-btn{padding:5px 11px;background:var(--surface2);border:0.5px solid var(--border);border-radius:12px;font-size:10px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text);transition:all 0.15s;}
+.ai-q-btn:hover{background:var(--accent);color:var(--accent-text);border-color:var(--accent);}
+.ai-msgs{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;margin-bottom:10px;padding-right:2px;}
+.ai-msg{padding:9px 11px;border-radius:var(--radius);font-size:12px;line-height:1.7;}
+.ai-msg.user{background:var(--accent);color:var(--accent-text);align-self:flex-end;max-width:88%;border-radius:var(--radius) var(--radius) 2px var(--radius);}
+.ai-msg.bot{background:var(--surface2);color:var(--text);border:0.5px solid var(--border);align-self:flex-start;border-radius:2px var(--radius) var(--radius) var(--radius);}
+.ai-msg.thinking{background:transparent;border:none;color:var(--text3);font-style:italic;font-size:11px;align-self:flex-start;padding:4px 0;}
+.ai-input-row{display:flex;gap:6px;}
+.ai-txt{flex:1;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:12px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);outline:none;}
+.ai-txt:focus{border-color:var(--accent);}
+.ai-go{padding:8px 14px;background:var(--accent);color:var(--accent-text);border:none;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;border-radius:var(--radius);}
+.ai-go:hover{opacity:0.85;}
 @media(max-width:700px){
 .three-col{grid-template-columns:1fr;}
 .stat-row{grid-template-columns:repeat(2,1fr);}
@@ -140,6 +192,7 @@ textarea{resize:vertical;}
 .nav{overflow-x:auto;width:100%;}
 .panel{padding:1rem;}
 .form-row{grid-template-columns:1fr;}
+.planner-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -150,6 +203,7 @@ textarea{resize:vertical;}
     <button class="nav-btn active" onclick="switchTab('overview',this)">Overview</button>
     <button class="nav-btn" onclick="switchTab('hook-tester',this)">Hook Tester</button>
     <button class="nav-btn" onclick="switchTab('remotion',this)">Remotion</button>
+    <button class="nav-btn" onclick="switchTab('planner',this)">Planner</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -358,6 +412,62 @@ textarea{resize:vertical;}
   </div>
 </div>
 
+<!-- PLANNER -->
+<div id="tab-planner" class="panel">
+  <div class="planner-grid">
+
+    <!-- LEFT: WHITEBOARD -->
+    <div class="wb-wrap">
+      <div class="wb-toolbar">
+        <div class="sh" style="margin:0;flex:1;">Whiteboard</div>
+        <button class="add-note-btn" onclick="addNote('yellow')">+ Yellow</button>
+        <button class="add-note-btn" onclick="addNote('blue')">+ Blue</button>
+        <button class="add-note-btn" onclick="addNote('green')">+ Green</button>
+        <button class="add-note-btn" onclick="addNote('pink')">+ Pink</button>
+        <button class="btn-xs-outline" style="font-size:10px;" onclick="clearBoard()">Clear</button>
+      </div>
+      <div class="wb-canvas" id="wb-canvas"><div class="wb-grid"></div></div>
+    </div>
+
+    <!-- RIGHT: IDEAS + AI -->
+    <div class="planner-right">
+
+      <!-- IDEAS WITH STATUS -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="sh" style="margin:0;">Video Ideas</div>
+          <div style="display:flex;gap:4px;">
+            <button class="filter-pill active" id="plnr-f-all" onclick="setPlannerFilter('all',this)" style="padding:3px 8px;font-size:10px;">All</button>
+            <button class="filter-pill" id="plnr-f-idea" onclick="setPlannerFilter('idea',this)" style="padding:3px 8px;font-size:10px;">Idea</button>
+            <button class="filter-pill" id="plnr-f-filming" onclick="setPlannerFilter('filming',this)" style="padding:3px 8px;font-size:10px;">Filming</button>
+            <button class="filter-pill" id="plnr-f-done" onclick="setPlannerFilter('done',this)" style="padding:3px 8px;font-size:10px;">Done</button>
+          </div>
+        </div>
+        <div class="sub" style="margin-bottom:0;">Click a status pill to cycle it. Hit → to send to AI.</div>
+        <div class="ideas-scroll-sm" id="planner-ideas-list"></div>
+      </div>
+
+      <!-- AI ASSISTANT -->
+      <div class="card ai-chat-wrap">
+        <div class="sh" style="margin-bottom:10px;">AI Assistant</div>
+        <div class="ai-quick-btns">
+          <button class="ai-q-btn" onclick="aiQuick('generate')">✦ Generate ideas</button>
+          <button class="ai-q-btn" onclick="aiQuick('expand')">↗ Expand idea</button>
+          <button class="ai-q-btn" onclick="aiQuick('caption')">✎ Write caption</button>
+        </div>
+        <div class="ai-msgs" id="ai-msgs">
+          <div class="ai-msg bot">Hey Joel — I know your content pillars and your brand. Ask me to generate ideas, expand a concept, or write a caption. Hit → on any idea to send it here directly.</div>
+        </div>
+        <div class="ai-input-row">
+          <input class="ai-txt" id="ai-input" placeholder="Ask anything about your content…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMsg();}">
+          <button class="ai-go" onclick="sendAiMsg()">→</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
 // ============ DATA & STATE ============
 const typeColors={coaching:'p-coaching',faith:'p-faith',brand:'p-brand',cinematic:'p-cinematic',lifestyle:'p-lifestyle'};
@@ -381,6 +491,7 @@ function loadStorage(){
   try{customIdeas=JSON.parse(localStorage.getItem('jl-custom-ideas')||'[]');}catch(e){customIdeas=[];}
   try{ideaEdits=JSON.parse(localStorage.getItem('jl-idea-edits')||'{}');}catch(e){ideaEdits={};}
   try{calPlanEdits=JSON.parse(localStorage.getItem('jl-calplan')||'{}');}catch(e){calPlanEdits={};}
+  loadPlannerStorage();
 }
 
 function savePosts(){localStorage.setItem('jl-posts',JSON.stringify(posts));updateStats();}
@@ -802,6 +913,276 @@ function removeHookVar(i){hookVars.splice(i,1);renderHookVars();buildHookTestPro
 function renderHookVars(){const c=document.getElementById('hook-vars');c.innerHTML=hookVars.length?hookVars.map((h,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--surface);margin-bottom:5px;"><div style="font-size:10px;font-weight:500;color:var(--text2);min-width:18px;">V${i+1}</div><input type="text" value="${h.replace(/"/g,'&quot;')}" placeholder="Hook variation ${i+1}..." style="flex:1;border:none;background:transparent;outline:none;font-size:11px;" oninput="hookVars[${i}]=this.value;buildHookTestPrompts();"><button style="font-size:10px;color:var(--text2);cursor:pointer;padding:2px 6px;border:0.5px solid var(--border);border-radius:3px;background:transparent;" onclick="removeHookVar(${i})">remove</button></div>`).join(''):'<p class="empty" style="margin-bottom:8px;">No variations yet.</p>';}
 function buildHookTestPrompts(){const c=document.getElementById('hook-test-prompts');const clips=getClipNames();const key=vtypeKeys[selVtype];const filled=hookVars.filter(h=>h.trim());if(!filled.length||!clips.length){c.innerHTML='';return;}c.innerHTML=`<div class="divider"></div><div class="sh" style="margin-bottom:8px;">Hook test prompts</div>`+filled.map((h,i)=>{const id=`hkp-${i}`;return `<div style="margin-bottom:12px;"><div style="font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Version ${i+1}</div><div class="prompt-box" id="${id}" style="font-size:10px;">Keep the full video IDENTICAL. Swap ONLY the first 3-5 seconds.\n\nHook V${i+1}: "${h}"\n\n${promptTpls[key](clips,h)}</div><button class="btn-outline" style="font-size:10px;padding:5px 10px;" onclick="copyEl('${id}',this)">Copy V${i+1}</button></div>`;}).join('');}
 
+// ============ PLANNER ============
+let wbNotes=[],plannerIdeasStatus={},plannerFilter='all',dragNote=null,dragOX=0,dragOY=0;
+
+function loadPlannerStorage(){
+  try{wbNotes=JSON.parse(localStorage.getItem('jl-wb-notes')||'[]');}catch(e){wbNotes=[];}
+  try{plannerIdeasStatus=JSON.parse(localStorage.getItem('jl-pi-status')||'{}');}catch(e){plannerIdeasStatus={};}
+}
+function saveWbNotes(){localStorage.setItem('jl-wb-notes',JSON.stringify(wbNotes));}
+function savePIStatus(){localStorage.setItem('jl-pi-status',JSON.stringify(plannerIdeasStatus));}
+
+// ── Whiteboard ──
+function addNote(color){
+  const id=Date.now();
+  const canvas=document.getElementById('wb-canvas');
+  const maxX=Math.max(30,canvas.clientWidth-220);
+  const maxY=Math.max(30,canvas.clientHeight-160);
+  const x=40+Math.floor(Math.random()*Math.min(maxX,300));
+  const y=40+Math.floor(Math.random()*Math.min(maxY,250));
+  wbNotes.push({id,color,text:'',x,y});
+  saveWbNotes();
+  _mountNote(wbNotes[wbNotes.length-1]);
+}
+
+function renderBoard(){
+  const canvas=document.getElementById('wb-canvas');
+  canvas.querySelectorAll('.wb-note').forEach(n=>n.remove());
+  wbNotes.forEach(n=>_mountNote(n));
+}
+
+function _mountNote(note){
+  const canvas=document.getElementById('wb-canvas');
+  const el=document.createElement('div');
+  el.className=`wb-note ${note.color}`;
+  el.dataset.id=note.id;
+  el.style.cssText=`left:${note.x}px;top:${note.y}px;`;
+  el.innerHTML=`<div class="wb-note-handle"><span class="wb-note-handle-dots">· · · ·</span><button class="wb-note-close" onmousedown="event.stopPropagation()" onclick="deleteNote(${note.id})">×</button></div><textarea class="wb-note-text" placeholder="Jot an idea…" oninput="updateNoteText(${note.id},this.value)">${note.text.replace(/</g,'&lt;')}</textarea>`;
+  el.querySelector('.wb-note-handle').addEventListener('mousedown',e=>{
+    if(e.target.tagName==='BUTTON')return;
+    dragNote=el;
+    const rect=canvas.getBoundingClientRect();
+    dragOX=e.clientX-rect.left-parseInt(el.style.left||0);
+    dragOY=e.clientY-rect.top-parseInt(el.style.top||0);
+    el.style.zIndex=50;
+    e.preventDefault();
+  });
+  canvas.appendChild(el);
+}
+
+function deleteNote(id){
+  wbNotes=wbNotes.filter(n=>n.id!==id);
+  saveWbNotes();
+  const el=document.querySelector(`.wb-note[data-id="${id}"]`);
+  if(el)el.remove();
+}
+
+function updateNoteText(id,text){
+  const n=wbNotes.find(n=>n.id===id);
+  if(n){n.text=text;saveWbNotes();}
+}
+
+function clearBoard(){
+  if(!wbNotes.length||confirm('Clear all notes?')){wbNotes=[];saveWbNotes();renderBoard();}
+}
+
+function initWbDrag(){
+  document.addEventListener('mousemove',e=>{
+    if(!dragNote)return;
+    const canvas=document.getElementById('wb-canvas');
+    if(!canvas)return;
+    const rect=canvas.getBoundingClientRect();
+    const x=Math.max(0,Math.min(e.clientX-rect.left-dragOX,canvas.clientWidth-dragNote.offsetWidth));
+    const y=Math.max(0,Math.min(e.clientY-rect.top-dragOY,canvas.clientHeight-dragNote.offsetHeight));
+    dragNote.style.left=x+'px';
+    dragNote.style.top=y+'px';
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!dragNote)return;
+    const id=parseInt(dragNote.dataset.id);
+    const note=wbNotes.find(n=>n.id===id);
+    if(note){note.x=parseInt(dragNote.style.left);note.y=parseInt(dragNote.style.top);saveWbNotes();}
+    dragNote.style.zIndex='';
+    dragNote=null;
+  });
+}
+
+// ── Planner Ideas ──
+function setPlannerFilter(f,btn){
+  plannerFilter=f;
+  document.querySelectorAll('#tab-planner .filter-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderPlannerIdeas();
+}
+
+function renderPlannerIdeas(){
+  const all=getAllIdeas();
+  const filtered=plannerFilter==='all'?all:all.filter(i=>(plannerIdeasStatus[i.key]||'idea')===plannerFilter);
+  const list=document.getElementById('planner-ideas-list');
+  if(!list)return;
+  const statuses=['idea','filming','editing','done'];
+  list.innerHTML=filtered.length?filtered.map(item=>{
+    const st=plannerIdeasStatus[item.key]||'idea';
+    return `<div class="pi-row">
+      <span class="cpill ${typeColors[item.type]||'p-coaching'}" style="flex-shrink:0;font-size:8px;">${item.type}</span>
+      <span class="pi-hook" title="${item.hook.replace(/"/g,'&quot;')}">${item.hook}</span>
+      <button class="pi-status s-${st}" onclick="cycleIdeaSt('${item.key}')">${st}</button>
+      <button class="pi-send" onclick="sendIdeaToAI('${item.hook.replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${item.type}')" title="Send to AI">→</button>
+    </div>`;
+  }).join(''):'<div class="empty" style="padding:6px 0;">No ideas with this status.</div>';
+}
+
+function cycleIdeaSt(key){
+  const s=['idea','filming','editing','done'];
+  const cur=plannerIdeasStatus[key]||'idea';
+  plannerIdeasStatus[key]=s[(s.indexOf(cur)+1)%s.length];
+  savePIStatus();renderPlannerIdeas();
+}
+
+function sendIdeaToAI(hook,type){
+  document.getElementById('ai-input').value='';
+  appendAiMsg('user',`Expand this idea: "${hook}"`);
+  aiThink(()=>appendAiMsg('bot',aiExpandIdea(hook,type)));
+}
+
+// ── AI Assistant ──
+function aiQuick(type){
+  const all=getAllIdeas();
+  const r=all[Math.floor(Math.random()*all.length)];
+  if(type==='generate'){
+    appendAiMsg('user','Generate some fresh video ideas for me.');
+    aiThink(()=>appendAiMsg('bot',aiGenerateIdeas()));
+  }else if(type==='expand'){
+    appendAiMsg('user',`Expand this idea: "${r.hook}"`);
+    aiThink(()=>appendAiMsg('bot',aiExpandIdea(r.hook,r.type)));
+  }else if(type==='caption'){
+    appendAiMsg('user',`Write a caption for: "${r.hook}"`);
+    aiThink(()=>appendAiMsg('bot',aiWriteCaption(r.hook,r.type)));
+  }
+}
+
+function sendAiMsg(){
+  const input=document.getElementById('ai-input');
+  const text=input.value.trim();if(!text)return;
+  input.value='';
+  appendAiMsg('user',text);
+  const lower=text.toLowerCase();
+  aiThink(()=>{
+    let resp;
+    const quoted=text.match(/[""]([^""]+)[""]/);
+    if(lower.includes('generate')||lower.match(/new idea|ideas for|suggest idea/)){
+      resp=aiGenerateIdeas();
+    }else if(lower.match(/expand|flesh out|develop|build out/)){
+      if(quoted){const t=_detectType(quoted[1]);resp=aiExpandIdea(quoted[1],t);}
+      else{const all=getAllIdeas();const r=all[Math.floor(Math.random()*all.length)];resp=aiExpandIdea(r.hook,r.type);}
+    }else if(lower.match(/caption|hashtag|write.*for/)){
+      if(quoted){const t=_detectType(quoted[1]);resp=aiWriteCaption(quoted[1],t);}
+      else{const all=getAllIdeas();const r=all[Math.floor(Math.random()*all.length)];resp=aiWriteCaption(r.hook,r.type);}
+    }else if(lower.match(/hook.*suggest|suggest.*hook|give.*hook|hook idea/)){
+      resp=aiSuggestHooks();
+    }else{
+      resp=aiGeneralResp(text);
+    }
+    appendAiMsg('bot',resp);
+  });
+}
+
+function aiThink(cb){
+  const area=document.getElementById('ai-msgs');
+  const el=document.createElement('div');
+  el.className='ai-msg thinking';el.textContent='Thinking…';
+  area.appendChild(el);area.scrollTop=area.scrollHeight;
+  setTimeout(()=>{el.remove();cb();},700+Math.random()*500);
+}
+
+function appendAiMsg(role,text){
+  const area=document.getElementById('ai-msgs');
+  const el=document.createElement('div');
+  el.className='ai-msg '+role;
+  el.innerHTML=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  area.appendChild(el);area.scrollTop=area.scrollHeight;
+}
+
+function _detectType(h){
+  const s=h.toLowerCase();
+  if(s.match(/jump|takeoff|approach|bar|drills?|technique|clearance/))return 'coaching';
+  if(s.match(/god|faith|trust|pray|spirit|purpose|season|prayer/))return 'faith';
+  if(s.match(/xxo|hoodie|drop|brand|clothing|product|april 11/))return 'brand';
+  if(s.match(/morning|day in|build|journey|life|campus/))return 'lifestyle';
+  return 'cinematic';
+}
+
+// ── AI Response Generators ──
+function aiGenerateIdeas(){
+  const pools={
+    coaching:[
+      {hook:'I filmed my approach in slow motion. Here is what I actually saw.',angle:'Use training footage + freeze frames. Walk through one specific flaw and the fix — text overlays on key moments.'},
+      {hook:'Stop training your approach. Train this instead.',angle:'Counterintuitive take on takeoff mechanics. Call out what most jumpers obsess over vs. what actually clears the bar.'},
+      {hook:'The drill that fixed my plant foot in two weeks.',angle:'Quick tutorial. Show the drill, explain the mechanics, end with competition clip showing the result.'},
+      {hook:'What 1 cm of hip height actually looks like in a jump.',angle:'Technical breakdown. Slow-mo comparison showing hip position changes and the difference in clearance.'},
+      {hook:'Nobody shows you this part of the Fosbury flop.',angle:'Under-taught technique detail — arch timing, shoulder drop, or knee drive. Educational but scroll-stopping.'}
+    ],
+    faith:[
+      {hook:"God didn't remove the hard season. He changed what I thought it was for.",angle:'Personal story. Name a specific athletic or business setback. Walk through the shift in perspective — not inspiration, real experience.'},
+      {hook:'You can be fully committed and completely wrong about where you are going.',angle:'Philosophical take. Challenge the idea that hard work confirms direction. Best format: slow voiceover over training footage.'},
+      {hook:'The most dangerous prayer I ever prayed was for clarity.',angle:'Story-driven. What happened after praying for direction in your career or with XXO. Honest and specific.'},
+      {hook:'There is a version of success that will cost you everything that matters.',angle:'Countercultural message. Define success beyond athletics and money — speak directly to your audience of student athletes.'}
+    ],
+    brand:[
+      {hook:'Why I almost did not launch XXO Athletics.',angle:'Founder story. The moment you nearly stopped — and what pushed you through. Raw and real, not polished.'},
+      {hook:'The X is the setback. The O is what comes after.',angle:'Brand philosophy video. Tell the origin of the name. Who XXO is built for. Best as cinematic voiceover.'},
+      {hook:'I built this for athletes who train when nobody is watching.',angle:'Identity video. Show the XXO customer — the early morning, the empty track, the work before recognition.'},
+      {hook:'6 days. One drop. This is what it took to get here.',angle:'Behind the scenes countdown. Design process, samples, corrections, final product — real timeline, no fluff.'}
+    ],
+    lifestyle:[
+      {hook:'What my mornings look like when I am actually locked in.',angle:'Day-in-the-life, no staging. Real pace, real footage. Handheld is fine — authenticity matters more than polish here.'},
+      {hook:'The conversation that changed how I think about competition.',angle:'Story format. A real exchange with a coach, teammate, or competitor that reframed your approach.'},
+      {hook:'You become your environment whether you want to or not.',angle:'Show your actual training space and the people around you. Philosophical lifestyle take, slow and deliberate.'}
+    ]
+  };
+  const types=['coaching','faith','brand','lifestyle'];
+  const picks=types.map(t=>{const arr=pools[t];return{type:t,...arr[Math.floor(Math.random()*arr.length)]};});
+  picks.sort(()=>Math.random()-0.5);
+  const sel=picks.slice(0,3);
+  return 'Here are 3 fresh ideas:\n\n'+sel.map((p,i)=>`${i+1}. [${p.type.toUpperCase()}]\n"${p.hook}"\n↳ ${p.angle}`).join('\n\n')+'\n\nWant me to expand any of these or write a caption?';
+}
+
+function aiExpandIdea(hook,type){
+  const voice={coaching:{tone:'Educational and direct',cta:'Save this and tag a jumper who needs it.'},faith:{tone:'Personal and reflective',cta:'Drop a 🙏 if this hit.'},brand:{tone:'Confident and aspirational',cta:'Link in bio. April 11. 30 hoodies only.'},cinematic:{tone:'Minimal and powerful',cta:'Follow for more.'},lifestyle:{tone:'Authentic and grounded',cta:'What does your version of this look like?'}};
+  const v=voice[type]||voice.cinematic;
+  const alts=_hookAlts(hook,type);
+  const film=_filmNotes(type);
+  const cap=_shortCaption(hook,type);
+  return `Expanded concept:\n"${hook}"\n\nTone: ${v.tone}\n\nHook variations:\n${alts.map(h=>`• "${h}"`).join('\n')}\n\nFilming notes:\n${film}\n\nCaption opener:\n${cap}\n\nCTA: ${v.cta}`;
+}
+
+function _hookAlts(hook,type){
+  const extras={coaching:["Most high jumpers never figure this out.","I wish someone showed me this earlier.","This single thing costs most jumpers inches."],faith:["Nobody talks about this part.","This changed everything for me.","If you are in a hard season — this is for you."],brand:["We built this for one type of person.","This is not just a clothing brand.","30 hoodies. One drop. April 11th."],cinematic:["Built in the dark.","The work nobody sees.","This is what it costs."],lifestyle:["This is what building looks like up close.","Most people never see this part.","Real life. No filter."]};
+  return [hook,...(extras[type]||extras.cinematic)].slice(0,3);
+}
+
+function _filmNotes(type){
+  const n={coaching:'• Slow motion on technique (60fps min)\n• Text overlays for key points\n• Wide → close-up on foot/hip sequence\n• Keep it under 45 seconds for best retention',faith:'• Natural light, morning or golden hour\n• Minimal movement — let the words carry the weight\n• Leave intentional silence, do not cut it\n• Film yourself speaking directly to camera',brand:'• Product visible in first 2 seconds\n• Dark background or flat lay style\n• Film 4K if possible, crop tight for Reels\n• End on XXO logo + April 11',cinematic:'• Slow motion everything\n• Underexpose slightly, add grain in edit\n• No talking — visuals carry it\n• 3–5 clips max at 4–6 seconds each',lifestyle:'• Day-of footage only, no staging\n• Handheld is fine — authenticity beats polish\n• Film more than you think you need\n• Keep real ambient audio'};
+  return n[type]||n.cinematic;
+}
+
+function _shortCaption(hook,type){
+  const c={coaching:`${hook}\n\nThis is the part most coaches never cover. If you are grinding the approach and still hitting the bar, this is why.`,faith:`${hook}\n\nI spent a long time running from this truth. When I finally stopped, everything shifted.`,brand:`${hook}\n\nXXO Athletics was built for the athlete who shows up when nobody is watching. That person deserves something that represents the standard they hold.`,cinematic:`${hook}\n\nBuilt in the hard seasons. Proven in the quiet ones.`,lifestyle:`${hook}\n\nNo filter here. This is what the process actually looks like.`};
+  return c[type]||c.cinematic;
+}
+
+function aiWriteCaption(hook,type){
+  const tags={coaching:'#highjump #trackandfieldlife #highjumptechnique #trackathletes #studentathlete #d1athlete #highjumper #tracktips #athletecoach #jumptraining',faith:'#faithoverfear #christianathlete #faithandathletics #purposedriven #godsplan #athleteoffaith #mindsetmatters #spiritualgrowth #d1athlete #hopeinChrist',brand:'#xxoathletics #clothingdrop #athletefashion #limitededition #hoodiedrop #April11 #athleticwear #studentathlete #buildingabrand #d1athlete',cinematic:'#cinematicreels #slowmotion #athletelife #d1athlete #trackandfieldlife #cinematicathletics #visualstorytelling #highjump #athleteaesthetic',lifestyle:'#dayinthelife #athletelife #d1studentathlete #buildingabrand #realdayinthelife #trackathletes #behindthescenes #authentic'};
+  const body=_shortCaption(hook,type);
+  const full=body+'\n\n'+(tags[type]||tags.cinematic);
+  return 'Caption ready:\n\n───\n'+full+'\n───\n\n~'+full.length+' chars. Want me to adjust the tone or add a specific CTA?';
+}
+
+function aiSuggestHooks(){
+  const h=['"If you high jump and you\'re not doing this, you\'re leaving inches on the bar."','"The hardest part of building something is not the work — it\'s the silence."','"Nobody told me success could feel like the wrong thing."','"I filmed my training today. Here is what I didn\'t expect to see."','"XXO was not built for everyone. It was built for one type of person."'];
+  return 'Here are 5 scroll-stopping hooks:\n\n'+h.join('\n')+'\n\nWant a batch for a specific pillar — coaching, faith, or brand?';
+}
+
+function aiGeneralResp(text){
+  const l=text.toLowerCase();
+  if(l.match(/xxo|brand|hoodie|drop|april/))return "XXO drops April 11 — 30 hoodies, no restock. Your best pre-drop content strategy: lead with the story (why XXO exists, who it's for), then shift to product reveals in the final week. Want me to draft a 10-day content plan leading into the drop?";
+  if(l.match(/schedule|plan|calendar|when to post/))return "For the April 11 drop, here's a clean posting rhythm:\n\n• 14 days out — Brand mission / origin story\n• 10 days — Training cinematic (subtle brand)\n• 7 days — First product reveal\n• 5 days — 'Who is XXO for' story video\n• 3 days — Behind the scenes / countdown\n• Drop day — Full product video + link in bio\n\nWant me to assign specific hooks from your idea bank to each of these?";
+  if(l.match(/coach|technique|jump|takeoff/))return "For coaching content, your highest-performing hooks will call out a specific mistake. The frames that work:\n• 'Most jumpers do X wrong'\n• 'Nobody teaches this part'\n• 'I fixed my [thing] in 2 weeks'\n\nWant me to expand a specific coaching idea with filming notes?";
+  if(l.match(/faith|mindset|purpose|hard season/))return "Faith content performs best when it's specific, not general. Posts that say 'trust the process' get scrolled past. Posts that say 'I prayed for this specific thing and here is what happened' get saved and shared.\n\nNaming the exact moment or decision is what makes it hit. Want me to help you build a specific story into a full script?";
+  return "I can help you generate new video ideas, expand a concept into a full plan with filming notes, or write a full Instagram caption with hashtags.\n\nYou can also hit → on any idea in the list above to send it here. What are you working on?";
+}
+
 // ============ UTILITIES ============
 function copyEl(id,btn){const text=document.getElementById(id).textContent;navigator.clipboard.writeText(text).then(()=>{if(btn){const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1800);}});}
 function switchTab(tab,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');btn.classList.add('active');}
@@ -812,6 +1193,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   const drop=new Date('2026-04-11');const now=new Date();
   document.getElementById('days-out').textContent=Math.max(0,Math.ceil((drop-now)/(1000*60*60*24)));
   buildCal();renderSchedule();renderIdeas();renderFolders();renderClips();renderVtypes();renderHookClipsList();renderHookInputs();renderTrialResults();
+  initWbDrag();renderBoard();renderPlannerIdeas();
 });
 </script>
 </body>
