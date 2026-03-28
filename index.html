@@ -263,62 +263,59 @@ textarea{resize:vertical;}
 <!-- HOOK TESTER -->
 <div id="tab-hook-tester" class="panel">
   <div class="sh">Hook Tester</div>
-  <div class="sub">Select a base video, write up to 5 hook variations or get AI suggestions, then schedule everything in one click. The main video posts to Instagram and TikTok. Hook variations post as Instagram trial reels, spaced 2 hours apart from your start time.</div>
+  <div class="sub">Pick your body video from your desktop, then pick a folder (or individual files) of hook clip recordings. Each hook clip becomes its own Instagram trial reel, posted 2 hours apart — so you can see which opening performs best.</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
     <div>
       <div class="card" style="margin-bottom:1rem;">
-        <div class="sh" style="margin-bottom:8px;">1. Select base video</div>
-        <div class="form-full"><label class="lbl">Folder</label>
-          <select id="ht-folder" onchange="renderHtClips()">
-            <option value="0">Photoshoot</option><option value="1">Training</option>
-            <option value="2">Brand / XXO</option><option value="3">Lifestyle</option>
-          </select>
+        <div class="sh" style="margin-bottom:4px;">1. Body video</div>
+        <div class="sub" style="margin-bottom:10px;">The main video body — the content that plays after the hook. This becomes your primary Instagram post.</div>
+        <button class="btn-outline" style="width:100%;margin-bottom:8px;" onclick="pickBodyVideo()">Choose video file from desktop</button>
+        <div id="body-video-info" style="display:none;background:var(--surface2);border-radius:var(--radius);padding:10px;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div style="flex:1;min-width:0;">
+              <div id="body-video-name" style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+              <div id="body-video-size" style="font-size:10px;color:var(--text2);margin-top:1px;"></div>
+            </div>
+            <span style="font-size:10px;color:var(--green);font-weight:500;">Selected</span>
+          </div>
         </div>
-        <div class="clip-list" id="ht-clip-list"></div>
-        <div id="ht-selected-label" style="font-size:11px;color:var(--text2);">No video selected</div>
+        <video id="body-video-preview" style="display:none;width:100%;max-height:160px;border-radius:var(--radius);object-fit:cover;background:#000;" controls></video>
       </div>
       <div class="card" style="margin-bottom:1rem;">
-        <div class="sh" style="margin-bottom:8px;">2. Main video details</div>
-        <div class="form-full"><label class="lbl">Content type</label>
-          <select id="ht-type" onchange="updateSchedulePreview()">
-            <option value="coaching">High jump coaching</option><option value="faith">Faith and mindset</option>
-            <option value="brand">XXO brand</option><option value="cinematic">Cinematic</option><option value="lifestyle">Lifestyle</option>
-          </select>
+        <div class="sh" style="margin-bottom:4px;">2. Hook clip videos</div>
+        <div class="sub" style="margin-bottom:10px;">Each clip is a different recorded hook (the first 3-5 seconds). Pick a folder of clips or select individual files — each becomes one Instagram trial reel.</div>
+        <div class="btn-row" style="margin-bottom:10px;">
+          <button class="btn-outline" style="flex:1;" onclick="pickHookFolder()">Choose folder</button>
+          <button class="btn-outline" style="flex:1;" onclick="pickHookFiles()">Choose files</button>
         </div>
-        <div class="form-full"><label class="lbl">Main hook (posts to Instagram + TikTok)</label>
-          <input type="text" id="ht-main-hook" placeholder="Your primary hook..." oninput="updateSchedulePreview()">
-        </div>
-        <div class="form-full"><label class="lbl">Caption</label>
-          <textarea id="ht-caption" rows="3" placeholder="Caption for the main post..."></textarea>
-        </div>
+        <div id="hook-clips-list"><div class="empty" style="margin:0;">No hook clips selected yet.</div></div>
       </div>
       <div class="card">
-        <div class="sh" style="margin-bottom:4px;">3. Schedule</div>
-        <div class="sub">Trial reels space 2 hours apart from your start time.</div>
+        <div class="sh" style="margin-bottom:4px;">3. Caption &amp; schedule</div>
+        <div class="sub" style="margin-bottom:10px;">Hook variations post as trial reels 2 hours apart from your start time, with no caption.</div>
+        <div class="form-full"><label class="lbl">Caption (main post only)</label>
+          <textarea id="ht-caption" rows="3" placeholder="Caption for the main Instagram post..."></textarea>
+        </div>
         <div class="form-row">
           <div><label class="lbl">Post date</label><input type="date" id="ht-date" oninput="updateSchedulePreview()"></div>
           <div><label class="lbl">Start time</label><input type="time" id="ht-start-time" value="08:00" oninput="updateSchedulePreview()"></div>
         </div>
-        <div style="background:var(--surface2);border-radius:var(--radius);padding:10px;font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.8;" id="ht-preview">Add hooks to see schedule preview.</div>
-        <div class="btn-row">
-          <button class="btn-dark" onclick="scheduleAll()">Schedule all</button>
-          <button class="btn-outline" onclick="generateRemotionPrompts()">Generate Remotion prompts</button>
-        </div>
+        <div style="background:var(--surface2);border-radius:var(--radius);padding:10px;font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.9;" id="ht-preview">Select videos and set a date to see the schedule.</div>
+        <button class="btn-dark" style="width:100%;" onclick="uploadAndSchedule()">Upload &amp; Schedule to Instagram</button>
       </div>
     </div>
     <div>
       <div class="card" style="margin-bottom:1rem;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <div class="sh" style="margin-bottom:0;">4. Hook variations (up to 5)</div>
+          <div class="sh" style="margin-bottom:0;">Hook labels</div>
           <button class="suggest-btn" onclick="suggestHooks()">AI suggest hooks</button>
         </div>
-        <div class="sub">Each variation posts as a separate Instagram trial reel with the same video body, only the first 3-5 seconds change.</div>
-        <div id="hook-inputs"></div>
-        <div id="ht-prompts-section" style="display:none;">
-          <div class="divider"></div>
-          <div class="sh" style="margin-bottom:8px;">Remotion prompts</div>
-          <div id="ht-prompts-list"></div>
-        </div>
+        <div class="sub">Label each hook clip so you remember what's in it. These labels appear in your trial results.</div>
+        <div id="hook-inputs"><div class="empty" style="margin:0;">Add hook clips to label them.</div></div>
+      </div>
+      <div class="card" id="upload-progress-card" style="display:none;margin-bottom:1rem;">
+        <div class="sh" style="margin-bottom:8px;">Uploading to Instagram</div>
+        <div id="upload-progress-inner"></div>
       </div>
       <div class="card">
         <div class="sh" style="margin-bottom:6px;">Trial reel results</div>
@@ -660,18 +657,133 @@ function deleteIdea(key){
 
 // ============ HOOK TESTER ============
 const folders=[{name:'Photoshoot',clips:['Hero walk away','Lean pose front','Cinematic profile','Jump sequence slow mo']},{name:'Training',clips:['Morning lift session','Approach drills','Bar clearance attempt']},{name:'Brand / XXO',clips:['Hoodie unboxing raw','Product close up','Colorway flat lay']},{name:'Lifestyle',clips:['Campus walk morning','Track field wide shot']}];
-let htClip=null;let hookVals=['','','','',''];
+let htBodyFile=null;let htHookFiles=[];let hookVals=[];
+const API_BASE='https://xxo-content-api.vercel.app';
 const hookSuggestions={coaching:['If you high jump, stop scrolling. This is for you.','Your approach is fine. Your takeoff is killing you.','Nobody teaches this part. It is why most people hit the bar.','The 5 mistakes high jumpers make that cost them inches.','The one thing Barshim does that nobody talks about.'],faith:['You are chasing something that will not satisfy you.','Comparison is the thief of joy. And most athletes are getting robbed.','The hardest thing I have done as an athlete is trust when I could not see.','Holding onto that is costing you more than you think.','What happens when you get everything and it is still not enough.'],brand:['30 hoodies. One drop. No restock. April 11th.','Nobody needs another clothing brand. So we built something different.','Built for the athlete who shows up when nobody is watching.','The X is the setback. The O is what waits on the other side.','Most brands make clothes. We make a statement.'],cinematic:['Formed in hard places.','The work nobody sees is what matters most.','Built different. Proven by the hard seasons.','Relentless.','This is what the process actually looks like.'],lifestyle:['This is what building from nothing looks like.','You become the standard of the people around you.','Protect your energy like you protect your training.','The most important decision has nothing to do with training.','Who you spend time with is who you become.']};
 
-function renderHtClips(){const fi=parseInt(document.getElementById('ht-folder').value);const c=document.getElementById('ht-clip-list');htClip=null;document.getElementById('ht-selected-label').textContent='No video selected';c.innerHTML=folders[fi].clips.map((clip,i)=>`<div class="clip" id="htc-${i}" onclick="selectHtClip(${fi},${i},'${clip}')"><div class="clip-thumb"><svg width="12" height="12" viewBox="0 0 12 12"><polygon points="4,2 10,6 4,10" fill="var(--text3)"/></svg></div><div class="clip-name">${clip}</div><div class="clip-chk"></div></div>`).join('');}
-function selectHtClip(fi,ci,name){document.querySelectorAll('#ht-clip-list .clip').forEach(c=>{c.classList.remove('sel','clip-single');c.querySelector('.clip-chk').textContent='';});const el=document.getElementById(`htc-${ci}`);el.classList.add('sel','clip-single');el.querySelector('.clip-chk').textContent='✓';htClip={folder:folders[fi].name,clip:name};document.getElementById('ht-selected-label').textContent=`Selected: ${name} (${folders[fi].name})`;updateSchedulePreview();}
-function renderHookInputs(){document.getElementById('hook-inputs').innerHTML=hookVals.map((v,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-size:10px;font-weight:500;color:var(--text2);min-width:20px;">V${i+1}</div><input type="text" value="${v.replace(/"/g,'&quot;')}" placeholder="Hook variation ${i+1}..." style="flex:1;font-size:12px;" oninput="hookVals[${i}]=this.value;updateSchedulePreview();"></div>`).join('');}
-function suggestHooks(){const type=document.getElementById('ht-type').value;hookVals=(hookSuggestions[type]||hookSuggestions.cinematic).slice(0,5);renderHookInputs();updateSchedulePreview();toast('Suggestions loaded — edit as needed');}
-function updateSchedulePreview(){const date=document.getElementById('ht-date').value;const st=document.getElementById('ht-start-time').value;const filled=hookVals.filter(h=>h.trim());const prev=document.getElementById('ht-preview');if(!date||!st){prev.textContent='Set a date and start time to see the schedule.';return;}if(!filled.length){prev.textContent='Add hook variations to see schedule preview.';return;}const[sh,sm]=st.split(':').map(Number);const mainT=`${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`;let lines=[`${mainT} — Main video → Instagram + TikTok`];filled.forEach((h,i)=>{const tot=sh*60+sm+(i+1)*120;const th=Math.floor(tot/60)%24;const tm=tot%60;lines.push(`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')} — V${i+1} trial reel → Instagram: "${h.substring(0,38)}${h.length>38?'...':''}"`);});prev.innerHTML=lines.map(l=>`<div>${l}</div>`).join('');}
-function scheduleAll(){if(!htClip){toast('Select a base video first','#D85A30');return;}const date=document.getElementById('ht-date').value;const st=document.getElementById('ht-start-time').value;const mainHook=document.getElementById('ht-main-hook').value.trim();const caption=document.getElementById('ht-caption').value.trim();const type=document.getElementById('ht-type').value;if(!date||!mainHook){toast('Add a date and main hook first','#D85A30');return;}const filled=hookVals.filter(h=>h.trim());if(!filled.length){toast('Add at least one hook variation','#D85A30');return;}const[sh,sm]=st.split(':').map(Number);const gid=Date.now();const mainT=`${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`;posts.push({id:Date.now()+Math.random(),date,time:mainT,platform:'Both (Instagram + TikTok)',type,hook:mainHook,caption,notes:`Base: ${htClip.clip}`,status:'scheduled',isTrial:false,groupId:gid});filled.forEach((h,i)=>{const tot=sh*60+sm+(i+1)*120;const th=Math.floor(tot/60)%24;const tm=tot%60;posts.push({id:Date.now()+Math.random()+i,date,time:`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}`,platform:'Instagram Trial Reel',type,hook:h,caption:'',notes:`V${i+1} — base: ${htClip.clip}`,status:'scheduled',isTrial:true,groupId:gid});});trialResults.push({groupId:gid,date,baseVideo:htClip.clip,mainHook,hooks:filled,ratings:filled.map(()=>0),winner:null,notes:''});savePosts();saveTrials();renderSchedule();buildCal();renderTrialResults();toast(`Scheduled: 1 main + ${filled.length} trial reels`);}
+function formatFileSize(b){return b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';}
+
+async function pickBodyVideo(){
+  if(!window.showOpenFilePicker){toast('Use Chrome or Edge for file picker','#D85A30');return;}
+  try{
+    const[fh]=await window.showOpenFilePicker({types:[{description:'Video',accept:{'video/*':['.mp4','.mov','.m4v']}}],multiple:false});
+    htBodyFile=await fh.getFile();
+    document.getElementById('body-video-name').textContent=htBodyFile.name;
+    document.getElementById('body-video-size').textContent=formatFileSize(htBodyFile.size);
+    document.getElementById('body-video-info').style.display='block';
+    const prev=document.getElementById('body-video-preview');
+    prev.style.display='block';prev.src=URL.createObjectURL(htBodyFile);
+    updateSchedulePreview();
+  }catch(e){if(e.name!=='AbortError')toast('Could not open file picker','#D85A30');}
+}
+
+async function pickHookFolder(){
+  if(!window.showDirectoryPicker){toast('Use Chrome or Edge for folder picker','#D85A30');return;}
+  try{
+    const dir=await window.showDirectoryPicker();
+    const files=[];
+    for await(const[name,handle] of dir.entries()){
+      if(handle.kind==='file'&&/\.(mp4|mov|m4v)$/i.test(name)){
+        const f=await handle.getFile();files.push(f);
+      }
+    }
+    if(!files.length){toast('No video files found in that folder','#D85A30');return;}
+    htHookFiles=files.sort((a,b)=>a.name.localeCompare(b.name));
+    hookVals=htHookFiles.map((_,i)=>hookVals[i]||'');
+    renderHookClipsList();renderHookInputs();updateSchedulePreview();
+    toast(`Loaded ${files.length} hook clip${files.length>1?'s':''} from folder`);
+  }catch(e){if(e.name!=='AbortError')toast('Could not open folder','#D85A30');}
+}
+
+async function pickHookFiles(){
+  if(!window.showOpenFilePicker){toast('Use Chrome or Edge for file picker','#D85A30');return;}
+  try{
+    const handles=await window.showOpenFilePicker({types:[{description:'Video',accept:{'video/*':['.mp4','.mov','.m4v']}}],multiple:true});
+    htHookFiles=await Promise.all(handles.map(h=>h.getFile()));
+    htHookFiles.sort((a,b)=>a.name.localeCompare(b.name));
+    hookVals=htHookFiles.map((_,i)=>hookVals[i]||'');
+    renderHookClipsList();renderHookInputs();updateSchedulePreview();
+  }catch(e){if(e.name!=='AbortError')toast('Could not open files','#D85A30');}
+}
+
+function renderHookClipsList(){
+  const c=document.getElementById('hook-clips-list');
+  if(!htHookFiles.length){c.innerHTML='<div class="empty" style="margin:0;">No hook clips selected yet.</div>';return;}
+  c.innerHTML=htHookFiles.map((f,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;${i<htHookFiles.length-1?'border-bottom:0.5px solid var(--border);':''}"><div style="font-size:10px;font-weight:500;color:var(--text2);min-width:22px;flex-shrink:0;">V${i+1}</div><div style="flex:1;min-width:0;"><div style="font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div><div style="font-size:10px;color:var(--text2);">${formatFileSize(f.size)}</div></div></div>`).join('');}
+
+function renderHookInputs(){
+  const c=document.getElementById('hook-inputs');
+  if(!htHookFiles.length){c.innerHTML='<div class="empty" style="margin:0;">Add hook clips to label them.</div>';return;}
+  c.innerHTML=htHookFiles.map((f,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-size:10px;font-weight:500;color:var(--text2);min-width:22px;flex-shrink:0;">V${i+1}</div><input type="text" value="${(hookVals[i]||'').replace(/"/g,'&quot;')}" placeholder="${f.name.replace(/\.[^.]+$/,'')}" style="flex:1;font-size:12px;" oninput="hookVals[${i}]=this.value;"></div>`).join('');}
+
+function suggestHooks(){
+  const type='cinematic';
+  const suggestions=hookSuggestions[type];
+  hookVals=htHookFiles.length?htHookFiles.map((_,i)=>suggestions[i]||''):suggestions.slice(0,5);
+  renderHookInputs();toast('Suggestions loaded — edit as needed');
+}
+
+function updateSchedulePreview(){
+  const date=document.getElementById('ht-date').value;
+  const st=document.getElementById('ht-start-time').value;
+  const prev=document.getElementById('ht-preview');
+  if(!date||!st){prev.textContent='Set a date and start time to see the schedule.';return;}
+  if(!htBodyFile&&!htHookFiles.length){prev.textContent='Select videos to see the schedule.';return;}
+  const[sh,sm]=st.split(':').map(Number);
+  const mainT=`${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`;
+  let lines=[];
+  if(htBodyFile)lines.push(`${mainT} — Main post → Instagram (${htBodyFile.name})`);
+  htHookFiles.forEach((f,i)=>{const tot=sh*60+sm+(i+1)*120;const th=Math.floor(tot/60)%24;const tm=tot%60;const label=hookVals[i]||`V${i+1}`;lines.push(`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')} — ${label} → Instagram trial reel`);});
+  prev.innerHTML=lines.map(l=>`<div>${l}</div>`).join('');
+}
+
+async function uploadAndSchedule(){
+  if(!htBodyFile&&!htHookFiles.length){toast('Select at least one video first','#D85A30');return;}
+  const date=document.getElementById('ht-date').value;
+  const st=document.getElementById('ht-start-time').value;
+  if(!date||!st){toast('Set a date and start time','#D85A30');return;}
+  const caption=document.getElementById('ht-caption').value.trim();
+  const[sh,sm]=st.split(':').map(Number);
+  const card=document.getElementById('upload-progress-card');
+  card.style.display='block';
+  const videos=[];
+  if(htBodyFile)videos.push({file:htBodyFile,label:'Main post',isMain:true,minuteOffset:0});
+  htHookFiles.forEach((f,i)=>videos.push({file:f,label:hookVals[i]||`Hook V${i+1}`,isMain:false,minuteOffset:(i+1)*120}));
+  let done=0;const results=[];
+  for(let i=0;i<videos.length;i++){
+    const v=videos[i];
+    setUploadProgress(i,videos.length,v.file.name,'uploading');
+    try{
+      const upRes=await fetch(`${API_BASE}/api/upload?filename=${encodeURIComponent(v.file.name)}`,{method:'PUT',headers:{'Content-Type':v.file.type||'video/mp4'},body:v.file});
+      if(!upRes.ok)throw new Error(`Upload failed: ${upRes.status}`);
+      const{url}=await upRes.json();
+      const tot=sh*60+sm+v.minuteOffset;const th=Math.floor(tot/60)%24;const tm=tot%60;
+      const scheduledAt=`${date}T${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}:00`;
+      const schRes=await fetch(`${API_BASE}/api/schedule`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({videoUrl:url,caption:v.isMain?caption:'',scheduledAt,label:v.label})});
+      if(!schRes.ok)throw new Error(`Schedule failed: ${schRes.status}`);
+      done++;results.push({name:v.file.name,success:true});
+      setUploadProgress(i,videos.length,v.file.name,'done');
+    }catch(err){
+      results.push({name:v.file.name,success:false,error:err.message});
+      setUploadProgress(i,videos.length,v.file.name,'error');
+    }
+  }
+  const gid=Date.now();
+  const hookLabels=htHookFiles.map((_,i)=>hookVals[i]||`Hook V${i+1}`);
+  trialResults.push({groupId:gid,date,baseVideo:htBodyFile?htBodyFile.name:'',hooks:hookLabels,ratings:hookLabels.map(()=>0),winner:null,notes:''});
+  saveTrials();renderTrialResults();
+  toast(`Scheduled ${done} of ${videos.length} video${videos.length>1?'s':''} to Instagram`);
+  if(done===videos.length)setTimeout(()=>{card.style.display='none';},3000);
+}
+
+function setUploadProgress(idx,total,filename,status){
+  const pct=Math.round((idx+(status==='done'?1:0.5))/total*100);
+  const statusLabel={uploading:'Uploading...',done:'Scheduled',error:'Failed'}[status];
+  const statusColor={uploading:'var(--text2)',done:'var(--green)',error:'#D85A30'}[status];
+  document.getElementById('upload-progress-inner').innerHTML=`<div style="font-size:11px;color:var(--text2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${idx+1} of ${total}: ${filename}</div><div style="background:var(--border);border-radius:4px;height:5px;overflow:hidden;margin-bottom:6px;"><div style="background:var(--accent);height:100%;width:${pct}%;transition:width 0.4s;border-radius:4px;"></div></div><div style="font-size:10px;font-weight:500;color:${statusColor};">${statusLabel}</div>`;}
 
 function buildTypePrompt(type){return{coaching:`Style: Clear, educational. Slow motion on technique. Numbered text overlays.\nPacing: 2-4 sec avg clips, cut on beat.\nAudio: Low energy background, clear voiceover.\nStructure: Hook → numbered tips → clear takeaway. Under 60 seconds.`,faith:`Style: Personal, cinematic. Natural light, film grain, cool muted tones.\nPacing: Very slow, deliberate pauses, silence intentional.\nAudio: Near silence, voiceover carries the emotion.\nStructure: Tension → experience → faith shift → message → single closing line.`,brand:`Style: Dark, cinematic, premium. Deep blacks, muted tones, film grain.\nColor: Darker and more contrasty, product stands out.\nAudio: Minimal ambient sound.\nEnd: XXO Athletics + April 11th.`,cinematic:`Style: Cool, desaturated, underexposed. Film grain 25. Slow motion. Avg clip 3-6 sec.\nColor: Pull exposure down, reduce saturation 20%, lift contrast.\nAudio: Ambient instrumental no lyrics. Voiceover slow with pauses.\nEnd: Single closing line then fade to black.`,lifestyle:`Style: Light, natural, personal. Warm tones, day in the life feel.\nPacing: Relaxed, conversational.\nAudio: Upbeat low energy background track.`}[type]||'';}
-function generateRemotionPrompts(){if(!htClip){toast('Select a base video first','#D85A30');return;}const type=document.getElementById('ht-type').value;const mainHook=document.getElementById('ht-main-hook').value.trim();const filled=hookVals.filter(h=>h.trim());if(!filled.length&&!mainHook){toast('Add hooks first','#D85A30');return;}const sec=document.getElementById('ht-prompts-section');const list=document.getElementById('ht-prompts-list');sec.style.display='block';const typeInstr=buildTypePrompt(type);const allHooks=[mainHook,...filled].filter(Boolean);list.innerHTML=allHooks.map((h,i)=>{const isMain=i===0;const id=`htp-${i}`;const prompt=isMain?`Edit this video: ${htClip.clip}\nHook (first 3-5 seconds): "${h}"\n\n${typeInstr}\n\nPost to: Instagram + TikTok.`:`Keep the FULL VIDEO IDENTICAL to the main version.\nSwap ONLY the first 3-5 seconds with this hook.\n\nHook V${i}: "${h}"\nBase clip: ${htClip.clip}\n\n${typeInstr}\n\nPost to: Instagram Trial Reel only.`;return `<div style="margin-bottom:12px;"><div style="font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">${isMain?'Main (Instagram + TikTok)':`Trial reel V${i} (Instagram trial reel)`}</div><div class="prompt-box" id="${id}" style="font-size:10px;">${prompt}</div><button class="btn-outline" style="font-size:10px;padding:5px 10px;" onclick="copyEl('${id}',this)">Copy ${isMain?'main':'V'+i} prompt</button></div>`;}).join('');}
+
 function renderTrialResults(){const list=document.getElementById('trial-results-list');const empty=document.getElementById('trial-empty');if(!trialResults.length){list.innerHTML='';empty.style.display='block';return;}empty.style.display='none';list.innerHTML=trialResults.map((r,ri)=>`<div style="background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:11px;font-weight:500;">${r.baseVideo}</div><div style="font-size:10px;color:var(--text2);">${r.date}</div>${r.winner!==null?`<span style="background:#F0997B;color:#712B13;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;">Winner: V${r.winner+1}</span>`:''}</div>${r.hooks.map((h,hi)=>`<div style="padding:8px 0;border-top:0.5px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div style="font-size:11px;font-weight:500;">V${hi+1}: "${h.substring(0,45)}${h.length>45?'...':''}"</div><button onclick="setWinner(${ri},${hi})" style="font-size:10px;padding:3px 8px;border:0.5px solid var(--border2);border-radius:3px;background:${r.winner===hi?'var(--accent)':'transparent'};color:${r.winner===hi?'var(--accent-text)':'var(--text)'};cursor:pointer;">Winner</button></div><div style="display:flex;gap:3px;">${[1,2,3,4,5].map(s=>`<span class="star${r.ratings[hi]>=s?' on':''}" onclick="rateTrial(${ri},${hi},${s})">&#9733;</span>`).join('')}</div></div>`).join('')}<div style="margin-top:8px;"><input type="text" value="${r.notes||''}" placeholder="Notes on what won and why..." style="font-size:11px;" oninput="trialResults[${ri}].notes=this.value;saveTrials();"></div></div>`).join('');}
 function rateTrial(ri,hi,rating){trialResults[ri].ratings[hi]=rating;saveTrials();renderTrialResults();}
 function setWinner(ri,hi){trialResults[ri].winner=hi;saveTrials();renderTrialResults();toast(`V${hi+1} marked as winner`);}
@@ -699,7 +811,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   loadStorage();
   const drop=new Date('2026-04-11');const now=new Date();
   document.getElementById('days-out').textContent=Math.max(0,Math.ceil((drop-now)/(1000*60*60*24)));
-  buildCal();renderSchedule();renderIdeas();renderFolders();renderClips();renderVtypes();renderHookInputs();renderHtClips();renderTrialResults();
+  buildCal();renderSchedule();renderIdeas();renderFolders();renderClips();renderVtypes();renderHookClipsList();renderHookInputs();renderTrialResults();
 });
 </script>
 </body>
